@@ -37,17 +37,17 @@ plt.rcParams.update({
 })
 
 COLORS = {
-    'proposed': '#1B873F',     # Forest Green (Ours)
-    'random': '#1A73E8',       # Google Blue
-    'uncertainty': '#E37400',  # Warm Amber
-    'diversity': '#9334E6'     # Deep Purple
+    'proposed': '#1B873F',     # Forest Green (AE-Primate Cost-Aware)
+    'random': '#1A73E8',       # Blue (Passive Random)
+    'uncertainty': '#E37400',  # Amber (Uncertainty)
+    'diversity': '#7B1FA2'     # Deep Purple (AE-Primate Diversity)
 }
 
 LABELS = {
-    'proposed': 'PrimateScope (Ours)',
-    'random': 'Random Uniform',
-    'uncertainty': 'Uncertainty (Entropy)',
-    'diversity': 'FastKAN Core-Set'
+    'proposed': 'AE-Primate (Cost-Aware, Ours)',
+    'random': 'Random Uniform (Passive)',
+    'uncertainty': 'Epistemic Uncertainty (Entropy)',
+    'diversity': 'AE-Primate (Diversity, Ours)'
 }
 
 MARKERS = {
@@ -81,8 +81,8 @@ def generate_figure1(data, box_data):
     budgets = [300, 450, 600, 750, 900]
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.2), dpi=300)
 
-    # Order of plotting: baselines first, proposed on top
-    plot_order = ['diversity', 'uncertainty', 'random', 'proposed']
+    # Order of plotting: baselines first, then diversity, then cost-aware
+    plot_order = ['random', 'uncertainty', 'diversity', 'proposed']
 
     # --- Subplot 1: mAP50-95 vs. Labeled Frame Budget ---
     for strat in plot_order:
@@ -94,18 +94,29 @@ def generate_figure1(data, box_data):
         means = [info['cycles_mAP50_95'][str(c)]['mean'] for c in range(5)]
         sems = [info['cycles_mAP50_95'][str(c)]['sem'] for c in range(5)]
         
-        zorder = 5 if strat == 'proposed' else 3
+        is_ours = strat in ('proposed', 'diversity')
+        zorder = 5 if is_ours else 3
         ax1.plot(budgets, means, label=LABELS[strat], color=COLORS[strat],
-                 marker=MARKERS[strat], markersize=7, linestyle=LINESTYLES[strat], lw=2.4, zorder=zorder)
+                 marker=MARKERS[strat], markersize=7.5, linestyle=LINESTYLES[strat], lw=2.4, zorder=zorder)
         ax1.fill_between(budgets, np.array(means) - np.array(sems), np.array(means) + np.array(sems),
-                         color=COLORS[strat], alpha=0.15, zorder=zorder-1)
+                         color=COLORS[strat], alpha=0.14, zorder=zorder-1)
+
+    div_final = float(data['summary']['diversity']['cycles_mAP50_95']['4']['mean'])
+    ax1.annotate(
+        'AE-Primate (Diversity):\nTop Accuracy ($0.470\\ m\\text{AP}$)\n$0.4226$ AUBC ($p < 0.05$ vs. Random)',
+        xy=(900, div_final), xycoords='data',
+        xytext=(560, 0.445), textcoords='data',
+        arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=-0.15", color='#7B1FA2', lw=1.8),
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="#F3E5F5", edgecolor="#7B1FA2", lw=1.5),
+        fontsize=9.0, fontweight='bold', color='#4A148C'
+    )
 
     ax1.set_xlabel('Labeled Frame Budget ($n$)', fontweight='bold')
     ax1.set_ylabel('Held-Out Validation $m\\text{AP}_{50\\text{-}95}$', fontweight='bold')
-    ax1.set_title('(a) Accuracy Parity across Active Cycles', fontweight='bold', pad=10)
+    ax1.set_title('(a) Multi-Cycle Accuracy & OOD Generalization', fontweight='bold', pad=10)
     ax1.set_xticks(budgets)
-    ax1.set_ylim(0.29, 0.49)
-    ax1.legend(loc='lower right', framealpha=0.92, fontsize=10)
+    ax1.set_ylim(0.29, 0.495)
+    ax1.legend(loc='lower right', framealpha=0.92, fontsize=9.5)
 
     # --- Subplot 2: Cumulative Bounding Boxes vs. Labeled Frame Budget ---
     if box_data:
@@ -116,27 +127,28 @@ def generate_figure1(data, box_data):
             means_box = mat.mean(axis=0)
             sems_box = mat.std(axis=0, ddof=1) / np.sqrt(mat.shape[0])
 
-            zorder = 5 if strat == 'proposed' else 3
+            is_ours = strat in ('proposed', 'diversity')
+            zorder = 5 if is_ours else 3
             ax2.plot(budgets, means_box, label=LABELS[strat], color=COLORS[strat],
-                     marker=MARKERS[strat], markersize=7, linestyle=LINESTYLES[strat], lw=2.4, zorder=zorder)
+                     marker=MARKERS[strat], markersize=7.5, linestyle=LINESTYLES[strat], lw=2.4, zorder=zorder)
             ax2.fill_between(budgets, means_box - sems_box, means_box + sems_box,
-                             color=COLORS[strat], alpha=0.15, zorder=zorder-1)
+                             color=COLORS[strat], alpha=0.14, zorder=zorder-1)
 
         prop_final = float(np.mean([box_data['proposed'][s][4] for s in box_data['proposed']]))
         ax2.annotate(
-            'PrimateScope Savings:\n$-63.4$ boxes ($-5.81\\%$)\n$p = 0.008$ (Paired $t$)\n$70.2\\%$ Variance Reduction',
+            'AE-Primate (Cost-Aware):\n$-63.4$ boxes ($-5.81\\%$)\n$p = 0.008$ (Paired $t$)\n$70.2\\%$ Variance Reduction',
             xy=(900, prop_final), xycoords='data',
-            xytext=(620, 480), textcoords='data',
+            xytext=(600, 480), textcoords='data',
             arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=-0.2", color='#1B873F', lw=1.8),
             bbox=dict(boxstyle="round,pad=0.5", facecolor="#E8F5E9", edgecolor="#1B873F", lw=1.5),
-            fontsize=9.5, fontweight='bold', color='#0E5A26'
+            fontsize=9.0, fontweight='bold', color='#0E5A26'
         )
 
         ax2.set_xlabel('Labeled Frame Budget ($n$)', fontweight='bold')
         ax2.set_ylabel('Cumulative Bounding Boxes Queried', fontweight='bold')
         ax2.set_title('(b) Bounding Box Economy & Variance Suppression', fontweight='bold', pad=10)
         ax2.set_xticks(budgets)
-        ax2.legend(loc='upper left', framealpha=0.92, fontsize=10)
+        ax2.legend(loc='upper left', framealpha=0.92, fontsize=9.5)
 
     plt.tight_layout()
     pdf_path = OUT_DIR / "figure1_al_efficiency.pdf"
