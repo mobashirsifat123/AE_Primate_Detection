@@ -51,7 +51,7 @@
 \maketitle
 
 \begin{abstract}
-Automated wildlife surveillance in remote protected ecosystems is critically bottlenecked by two compounding factors: the severe compute and thermal envelopes of solar-powered edge hardware ($\le 15$\,W) and the prohibitive economic cost of manual bounding-box annotation under visual instance congestion. In this paper, we present \textbf{AE-Primate}, an integrated framework uniting Kolmogorov-Arnold Network (KAN) non-linear spline layers with cost-sensitive active learning under extreme geographic distribution shifts. First, we establish \textbf{YOLO11n-F16}, an edge detector integrating a 16-basis Gaussian Radial Basis Function (RBF) FastKAN bottleneck into an ultra-compact 2.45\,M-parameter architecture. On held-out camera stations in Malawi's Nkhotakota Wildlife Reserve (40,743 frames across 49 stations), YOLO11n-F16 achieves \textbf{0.5626\,$m\text{AP}_{50\text{-}95}$}, outperforming capacity-matched convolutional baselines (+1.49\% mAP) and B-spline KAN architectures (+1.79\% mAP) while executing at 32.4\,FPS on NVIDIA Jetson Orin Nano (15\,W envelope). Second, we conduct an extensive multi-seed empirical benchmark ($N=5$ seeds, 20 trajectories) to investigate active learning under strict location-disjoint evaluation ($\mathcal{S}_{\text{train}} \cap \mathcal{S}_{\text{val}} \cap \mathcal{S}_{\text{test}} = \emptyset$). Our study exposes the fundamental failure modes of epistemic uncertainty under spatial covariate shift ($P_{\text{train}}(X) \neq P_{\text{test}}(X)$), where predictive entropy is confounded by unfamiliar background vegetation. In contrast, AE-Primate establishes a dual-mode active learning paradigm: (i)~\textbf{AE-Primate (Diversity-Driven)} leverages latent FastKAN feature-space Core-Set selection to achieve state-of-the-art out-of-distribution transfer, reaching \textbf{0.4300 held-out test $m\text{AP}_{50\text{-}95}$} and \textbf{0.4226 AUBC}, statistically significantly outperforming passive uniform random sampling ($p < 0.05$); (ii)~\textbf{AE-Primate (Cost-Constrained)} incorporates an instance-crowding penalty to operate along the budget Pareto frontier, querying \textbf{63.4 fewer cumulative bounding boxes ($-5.81\%$, paired $t$-test $p=0.008$)} while suppressing cross-seed annotation variance by \textbf{70.2\%}. All code, models, and manifests are available for open scientific replication.
+Automated wildlife surveillance in remote protected ecosystems is critically bottlenecked by two compounding factors: the severe compute and thermal envelopes of solar-powered edge hardware ($\le 15$\,W) and the prohibitive economic cost of manual bounding-box annotation under visual instance congestion. In this paper, we present \textbf{AE-Primate}, an integrated framework uniting Kolmogorov-Arnold Network (KAN) non-linear spline layers with cost-sensitive active learning under extreme geographic distribution shifts. First, we establish \textbf{YOLO11n-F16}, an edge detector integrating a 16-basis Gaussian Radial Basis Function (RBF) FastKAN bottleneck into an ultra-compact 2.45\,M-parameter architecture. On held-out camera stations in Malawi's Nkhotakota Wildlife Reserve (40,743 frames across 49 stations), YOLO11n-F16 achieves \textbf{0.5626\,$m\text{AP}_{50\text{-}95}$}, outperforming capacity-matched convolutional baselines (+1.49\% mAP) and B-spline KAN architectures (+1.79\% mAP) while executing at 32.4\,FPS on NVIDIA Jetson Orin Nano (15\,W envelope). Second, we conduct an extensive multi-seed empirical benchmark ($N=5$ seeds, 20 trajectories) to investigate active learning under strict location-disjoint evaluation ($\mathcal{S}_{\text{train}} \cap \mathcal{S}_{\text{val}} \cap \mathcal{S}_{\text{test}} = \emptyset$). Our study exposes the fundamental failure modes of epistemic uncertainty under spatial covariate shift ($P_{\text{train}}(X) \neq P_{\text{test}}(X)$), where predictive entropy is confounded by unfamiliar background vegetation. In contrast, AE-Primate establishes a dual-mode active learning paradigm: (i)~\textbf{AE-Primate (Diversity-Driven)} leverages latent FastKAN feature-space Core-Set selection to achieve state-of-the-art out-of-distribution transfer, reaching \textbf{0.4300 held-out test $m\text{AP}_{50\text{-}95}$} and \textbf{0.4226 AUBC}, statistically significantly outperforming passive uniform random sampling ($p < 0.05$); (ii)~\textbf{AE-Primate (Cost-Constrained)} incorporates an instance-crowding penalty to operate along the budget Pareto frontier, querying \textbf{59.8 fewer cumulative bounding boxes ($-5.48\%$, paired $t$-test $p=0.011$)} while suppressing cross-seed annotation standard deviation by \textbf{60.7\%} (84.6\% variance reduction). All code, models, and manifests are available for open scientific replication.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -86,7 +86,7 @@ To resolve these interconnected challenges, we introduce \textbf{AE-Primate}, an
 \begin{enumerate}
   \item \textbf{Kolmogorov-Arnold Feature Pyramid Neck (YOLO11n-F16):} We formulate the first edge-efficient Kolmogorov-Arnold detector, integrating frozen Gaussian Radial Basis Function (RBF) spline layers into the deepest neck bottleneck ($P_5$). YOLO11n-F16 establishes superior out-of-distribution detection (\textbf{0.5626\,$m\text{AP}_{50\text{-}95}$}) on held-out camera stations (+1.49\% over YOLO11n, +1.79\% over B-splines) at 2.45\,M parameters and 32.4\,FPS on NVIDIA Jetson Orin Nano (15\,W).
   \item \textbf{Deconstruction of Active Learning under Covariate Shift:} Through an extensive 5-seed benchmark (20 complete trajectories), we expose the failure of predictive entropy under spatial shift, where background clutter dominates uncertainty. Conversely, latent KAN Core-Set Diversity achieves superior out-of-distribution transfer ($0.4300$ test mAP).
-  \item \textbf{Crowding Penalization and Annotation Economy:} We formalize a cost-sensitive submodular acquisition policy that optimizes the trade-off between human labor and generalization, saving \textbf{63.4 cumulative bounding boxes ($-5.81\%$, $p=0.008$)} and suppressing cross-seed budgeting variance by \textbf{70.2\%}.
+  \item \textbf{Crowding Penalization and Annotation Economy:} We formalize a cost-sensitive submodular acquisition policy that optimizes the trade-off between human labor and generalization, saving \textbf{59.8 cumulative bounding boxes ($-5.48\%$, paired $t$-test $p=0.011$)} and suppressing cross-seed budgeting standard deviation by \textbf{60.7\%} (84.6\% variance reduction).
   \item \textbf{Zero-Leakage Location-Disjoint Conservation Benchmark:} We establish a standardized 40,743-frame benchmark across 49 remote camera stations in Nkhotakota Wildlife Reserve, enforcing disjoint geographic station partitions across candidate pool, validation, and test splits.
 \end{enumerate}
 
@@ -113,42 +113,49 @@ We now formulate the AE-Primate framework, comprising the YOLO11n-F16 detector a
 
 \subsection{Detector Architecture: Kolmogorov-Arnold Feature Pyramid Neck}
 \label{sec:arch}
-AE-Primate builds upon the Ultralytics YOLO11n single-stage detector~\cite{ultralytics2024}, which integrates an improved Cross-Stage Partial bottleneck (\texttt{C3k2}) and a decoupled anchor-free detection head across multi-scale feature pyramids ($P_3, P_4, P_5$). In multi-scale pyramids, shallow layers ($P_3, P_4$) extract high-resolution edge primitives where linear convolutions are computationally optimal. The deepest semantic stage ($P_5$, spatial grid $20 \times 20$, channel width $C=512$), however, must disentangle complex morphological pelage textures from dense foliage backgrounds. Standard convolutional bottlenecks apply static activations $\sigma(\mathbf{W}\mathbf{x} + \mathbf{b})$, which partition feature space via linear affine half-spaces and suffer from spectral bias on high-frequency biological patterns~\cite{rahaman2019spectral}. To provide locally supported non-linear representation without expanding parameters, we replace the $P_5$ bottleneck with a fixed-basis FastKAN transformation block (\texttt{C3k2\_FixedFastKAN}).
+AE-Primate builds upon the Ultralytics YOLO11n single-stage detector~\cite{ultralytics2024}, which integrates an improved Cross-Stage Partial bottleneck (\texttt{C3k2}) and a decoupled anchor-free detection head across multi-scale feature pyramids ($P_3, P_4, P_5$). In multi-scale pyramids, shallow layers ($P_3, P_4$) extract high-resolution edge primitives where linear convolutions are computationally optimal. The deepest semantic stage ($P_5$, spatial grid $20 \times 20$, channel width $C=256$ under YOLO11n's width multiple $0.25$), however, must disentangle complex morphological pelage textures from dense foliage backgrounds. Standard convolutional bottlenecks apply static activations $\sigma(\mathbf{W}\mathbf{x} + \mathbf{b})$, which partition feature space via linear affine half-spaces and suffer from spectral bias on high-frequency biological patterns~\cite{rahaman2019spectral}. To provide locally supported non-linear representation without expanding parameters, we replace the $P_5$ bottleneck with a fixed-basis FastKAN transformation block (\texttt{C3k2\_FixedFastKAN}).
 
-Let $\mathbf{x} \in \mathbb{R}^{C_{\text{in}}}$ denote an intermediate channel feature vector. In our FastKAN bottleneck, univariate activations along each channel are expanded over a dictionary of $K=16$ Gaussian Radial Basis Functions (RBFs):
+Let $\mathbf{x} \in \mathbb{R}^{C_{\text{in}}}$ ($C_{\text{in}} = 256$) denote an intermediate channel feature vector. In our FastKAN bottleneck, univariate activations along each channel are expanded over a dictionary of $K=16$ Gaussian Radial Basis Functions (RBFs):
 \begin{equation}
-  \phi_k(u) = \exp\!\left(-\frac{(u - \mu_k)^2}{2\sigma^2}\right), \quad k \in \{1, \dots, K\},
+  \phi_k(u) = \exp\!\left(-\frac{(u - \mu_k)^2}{2\sigma_k^2}\right), \quad k \in \{1, \dots, K\},
   \label{eq:rbf_basis}
 \end{equation}
-where scalar activation $u \in [-1, 1]$ evaluates against equispaced centres $\mu_k \in [-1, 1]$ with radial bandwidth $\sigma \in \mathbb{R}_{>0}$:
+where scalar activation $u$ evaluates against equispaced centres $\mu_k \in [-2.0, 2.0]$ with softplus-parameterized radial bandwidth $\sigma_k$:
 \begin{equation}
-  \mu_k = -1 + \frac{2(k - 1)}{K - 1}, \quad \sigma = \frac{2}{K - 1}.
+  \mu_k = -2 + \frac{4(k - 1)}{K - 1}, \quad \sigma_k = \operatorname{softplus}(\alpha_k) + \epsilon.
   \label{eq:grid}
 \end{equation}
-The forward transformation combining spline expansion with a residual linear path yields output features $\mathbf{y} \in \mathbb{R}^{C_{\text{out}}}$:
+The spline expansion evaluates as a fused depthwise $1 \times 1$ convolution over concatenated basis activations $\boldsymbol{\Phi}(\mathbf{x}) = [\phi_1(\mathbf{x})^\top, \dots, \phi_K(\mathbf{x})^\top]^\top \in \mathbb{R}^{K \cdot C_{\text{in}}}$ alongside a residual linear projection to yield output features $\mathbf{y} \in \mathbb{R}^{C_{\text{out}}}$:
 \begin{equation}
-  \mathbf{y} = \mathbf{W}_{\text{base}}\,\operatorname{SiLU}(\mathbf{x}) + \sum_{k=1}^K \mathbf{C}_k\,\phi_k(\mathbf{x}),
+  \mathbf{y} = \mathbf{W}_{\text{base}}\,\operatorname{SiLU}(\mathbf{x}) + \mathbf{W}_{\text{spline}}\,\boldsymbol{\Phi}(\mathbf{x}),
   \label{eq:fastkan_forward}
 \end{equation}
-where $\phi_k(\mathbf{x}) \in \mathbb{R}^{C_{\text{in}}}$ evaluates element-wise, $\mathbf{W}_{\text{base}} \in \mathbb{R}^{C_{\text{out}} \times C_{\text{in}}}$ is a residual projection, and $\mathbf{C}_k \in \mathbb{R}^{C_{\text{out}} \times C_{\text{in}}}$ denotes learnable spline mixture weights for basis $k$. Crucially, grid centres $\mu_k$ and bandwidth $\sigma$ remain fixed at initialisation, preserving continuous non-linear representations while enabling vectorized tensor-core batch operations. Due to compact spline factorization, YOLO11n-F16 requires only \textbf{2.45\,M} parameters---a 6.5\% reduction relative to the standard YOLO11n baseline (2.62\,M).
+where $\mathbf{W}_{\text{base}} \in \mathbb{R}^{C_{\text{out}} \times C_{\text{in}}}$ is a residual projection and $\mathbf{W}_{\text{spline}} \in \mathbb{R}^{C_{\text{out}} \times (K \cdot C_{\text{in}})}$ (grouped by $C_{\text{in}}$) parameterizes learnable spline mixture weights. Evaluating $\boldsymbol{\Phi}(\mathbf{x})$ via grouped $1 \times 1$ convolutions eliminates GPU warp divergence and uncoalesced memory reads, enabling vectorized FP16 execution on edge hardware. Due to compact spline factorization, YOLO11n-F16 requires only \textbf{2.45\,M} parameters---a 6.5\% reduction relative to the standard YOLO11n baseline (2.62\,M).
 
 \begin{algorithm}[t]
 \caption{AE-Primate Cost-Aware Active Learning}
 \label{alg:aeprimate}
 \begin{algorithmic}[1]
-\REQUIRE Candidate pool $\mathcal{U}_0$, initial labeled seed $\mathcal{L}_0$, cycle budget $B$, total cycles $T_{\text{max}}$, policy hyperparameters $(\beta_1, \beta_2, \beta_3)$, cost coefficients $(c_0, c_1, c_2)$.
+\footnotesize
+\REQUIRE Candidate pool $\mathcal{U}_0$, labeled seed $\mathcal{L}_0$, budget $B$, cycles $T_{\text{max}}$, weights $(\lambda_d, \lambda_s, \lambda_r)$, costs $(c_0, c_1, c_2)$, burst quota $Q_{\max} = 3$.
 \ENSURE Final trained primate detector $\mathcal{M}_{T_{\text{max}}}$.
 \STATE Initialize detector $\mathcal{M}_0 \leftarrow \text{Train}(\mathcal{L}_0; \mathbf{\Theta}_{\text{COCO}})$.
 \FOR{cycle $t = 1$ \TO $T_{\text{max}}$}
-  \FOR{each unlabelled candidate frame $x_i \in \mathcal{U}_{t-1}$}
-    \STATE Compute epistemic detection entropy $U(x_i)$ over $T_{\text{MC}}$ stochastic forward passes (Eq.~\ref{eq:uncertainty}).
-    \STATE Extract post-KAN embedding $\mathbf{f}_i \in \mathbb{R}^{512}$ and compute core-set diversity $D(x_i)$ against $\mathcal{L}_{t-1}$ (Eq.~\ref{eq:diversity}).
-    \STATE Compute spatiotemporal novelty prior $M_{\text{meta}}(x_i)$ (Eq.~\ref{eq:meta}).
-    \STATE Estimate crowding annotation cost $C_{\text{annot}}(x_i)$ from candidate box predictions (Eq.~\ref{eq:cost}).
-    \STATE Score candidate: $V(x_i) \leftarrow \frac{U(x_i)^{\beta_1} \cdot D(x_i)^{\beta_2} \cdot M_{\text{meta}}(x_i)^{\beta_3}}{C_{\text{annot}}(x_i)}$.
-  \ENDFOR
-  \STATE Select batch $\mathcal{S}_t \leftarrow \operatorname{arg\,top-}B_{x_i \in \mathcal{U}_{t-1}} V(x_i)$.
-  \STATE Acquire expert bounding-box annotations for batch $\mathcal{S}_t$.
+  \STATE Extract 256-D FastKAN features $\mathbf{f}_i$, uncertainty $U(x_i)$, and boxes $\hat{\mathcal{B}}_i$ $\forall x_i \in \mathcal{U}_{t-1}$.
+  \STATE Initialize Core-Set distances: $d_{\min}(x_i) \leftarrow \min_{s \in \mathcal{L}_{t-1}} \|\mathbf{f}_i - \mathbf{f}_s\|_2$.
+  \STATE Initialize batch $\mathcal{S}_t \leftarrow \emptyset$, event batch counter $K_{\text{evt}}(e) \leftarrow 0$.
+  \WHILE{$|\mathcal{S}_t| < B$}
+    \FOR{each available candidate $x_i \in \mathcal{U}_{t-1} \setminus \mathcal{S}_t$}
+      \IF{$K_{\text{evt}}(\text{evt}(x_i)) \ge Q_{\max}$} \STATE \textbf{continue} \COMMENT{Enforce burst quota} \ENDIF
+      \STATE $S(x_i) \leftarrow 1 / \sqrt{N_{\text{site}}(s(x_i)) + 1}$, $R(x_i) \leftarrow \frac{N_{\text{evt}}(\text{evt}(x_i))}{N_{\text{evt}}(\text{evt}(x_i)) + 1}$.
+      \STATE Estimate cost $C_{\text{annot}}(x_i)$ via Eq.~\ref{eq:cost} and marginal ratio:
+      \STATE $V(x_i \mid \mathcal{S}_t) \leftarrow \frac{U(x_i) + \lambda_d d_{\min}(x_i) + \lambda_s S(x_i)}{C_{\text{annot}}(x_i) + \epsilon} - \lambda_r R(x_i)$.
+    \ENDFOR
+    \STATE Select exemplar $x^* \leftarrow \arg\max_{x_i} V(x_i \mid \mathcal{S}_t)$; $\mathcal{S}_t \leftarrow \mathcal{S}_t \cup \{x^*\}$.
+    \STATE Update counters: $N_{\text{site}}(s(x^*)) \mathrel{+}= 1$, $K_{\text{evt}}(\text{evt}(x^*)) \mathrel{+}= 1$.
+    \STATE Update $d_{\min}(x_i) \leftarrow \min(d_{\min}(x_i), \|\mathbf{f}_i - \mathbf{f}_{x^*}\|_2)$ $\forall x_i \in \mathcal{U}_{t-1} \setminus \mathcal{S}_t$.
+  \ENDWHILE
+  \STATE Acquire expert box annotations for batch $\mathcal{S}_t$.
   \STATE Update pools: $\mathcal{L}_t \leftarrow \mathcal{L}_{t-1} \cup \mathcal{S}_t$, $\mathcal{U}_t \leftarrow \mathcal{U}_{t-1} \setminus \mathcal{S}_t$.
   \STATE Retrain detector from base weights: $\mathcal{M}_t \leftarrow \text{Train}(\mathcal{L}_t; \mathbf{\Theta}_{\text{COCO}})$.
 \ENDFOR
@@ -174,26 +181,33 @@ where $\mathcal{L}_{\text{det}}$ is the multi-task detection objective. Under fe
 
 Consequently, AB-FastKAN suffers from premature representational collapse: basis functions are severed before the detection head learns coordinate features. Imposing $\lambda \ge 0.05$ degrades validation $m\text{AP}_{50\text{-}95}$ from $0.5986$ to $<0.420$. Moreover, dynamic gating induces warp divergence and uncoalesced memory reads on GPU tensor cores, inflating inference latency by 38\% (14.82\,ms vs.\ 10.99\,ms).
 
-In contrast, fixed-basis FastKAN eliminates dynamic gating parameters $\boldsymbol{\alpha}$ entirely. The gradient with respect to spline weights $\mathbf{C}_k$ is direct and unattenuated:
+In contrast, fixed-basis FastKAN eliminates dynamic gating parameters $\boldsymbol{\alpha}$ entirely. The gradient with respect to spline weights $\mathbf{W}_{\text{spline}}$ is direct and unattenuated:
 \begin{equation}
-  \frac{\partial \mathcal{L}_{\text{det}}}{\partial \mathbf{C}_k} = \frac{\partial \mathcal{L}_{\text{det}}}{\partial \mathbf{y}} \cdot \phi_k(\mathbf{x})^\top,
+  \frac{\partial \mathcal{L}_{\text{det}}}{\partial \mathbf{W}_{\text{spline}}} = \frac{\partial \mathcal{L}_{\text{det}}}{\partial \mathbf{y}} \cdot \boldsymbol{\Phi}(\mathbf{x})^\top,
   \label{eq:stable_grad}
 \end{equation}
-where upstream gradient $\frac{\partial \mathcal{L}_{\text{det}}}{\partial \mathbf{y}} \in \mathbb{R}^{C_{\text{out}}}$ and basis activations $\phi_k(\mathbf{x}) \in \mathbb{R}^{C_{\text{in}}}$ form an outer product gradient tensor in $\mathbb{R}^{C_{\text{out}} \times C_{\text{in}}}$, ensuring stable backpropagation across all $K=16$ basis splines.
+where upstream gradient $\frac{\partial \mathcal{L}_{\text{det}}}{\partial \mathbf{y}} \in \mathbb{R}^{C_{\text{out}}}$ and basis activations $\boldsymbol{\Phi}(\mathbf{x}) \in \mathbb{R}^{K \cdot C_{\text{in}}}$ form an outer product gradient tensor, ensuring stable backpropagation across all $K=16$ basis splines.
 
 \subsection{Cost-Sensitive Submodular Acquisition Framework}
 \label{sec:policy}
-At each active cycle $t \in \{1, \dots, T_{\text{max}}\}$, the policy queries batch $\mathcal{S}_t \subset \mathcal{U}_{t-1}$ of size $B \in \mathbb{N}$ from candidate pool $\mathcal{U}_{t-1}$ by solving the constrained submodular knapsack problem:
+At each active cycle $t \in \{1, \dots, T_{\text{max}}\}$, the policy queries batch $\mathcal{S}_t \subset \mathcal{U}_{t-1}$ of size $B \in \mathbb{N}$ from candidate pool $\mathcal{U}_{t-1}$ by maximizing a submodular facility location and informativeness objective under knapsack cost constraints:
 \begin{equation}
-  \max_{\mathcal{S} \subseteq \mathcal{U}_{t-1},\, |\mathcal{S}|=B} \sum_{x_i \in \mathcal{S}} V(x_i),
+  \max_{\mathcal{S} \subseteq \mathcal{U}_{t-1},\, |\mathcal{S}|=B} F(\mathcal{L}_{t-1} \cup \mathcal{S}) - \lambda_r \sum_{x \in \mathcal{S}} R(x \mid \mathcal{S}),
   \label{eq:opt}
 \end{equation}
-where informativeness-to-cost ratio $V(x_i)$ is formulated as:
+where set utility $F(\mathcal{A}) = \sum_{u \in \mathcal{U}} \max_{s \in \mathcal{A}} \operatorname{sim}(\mathbf{f}_u, \mathbf{f}_s) + \sum_{a \in \mathcal{A}} [ U(a) + \lambda_s S(a) ]$ combines feature manifold coverage with epistemic uncertainty and spatial site representation. In our sequential greedy knapsack algorithm (Algorithm~\ref{alg:aeprimate}), the marginal benefit-to-cost ratio evaluating candidate $x_i$ relative to current batch $\mathcal{S}$ is formulated as:
 \begin{equation}
-  V(x_i) = \frac{U(x_i)^{\beta_1} \cdot D(x_i)^{\beta_2} \cdot M_{\text{meta}}(x_i)^{\beta_3}}{C_{\text{annot}}(x_i)},
-  \label{eq:score}
+\begin{aligned}
+  V(x_i \mid \mathcal{S}) ={}& \frac{U(x_i) + \lambda_d D(x_i \mid \mathcal{L}_{t-1} \cup \mathcal{S}) + \lambda_s S(x_i)}{C_{\text{annot}}(x_i) + \epsilon} \\
+  &- \lambda_r R(x_i \mid \mathcal{S}),
+\end{aligned}
+\label{eq:score}
 \end{equation}
-with scalar exponents $\beta_1, \beta_2, \beta_3 \in \mathbb{R}_{\ge 0}$ balancing epistemic uncertainty $U(x_i) \ge 0$, diversity $D(x_i) \in [0, 2]$, and novelty $M_{\text{meta}}(x_i) \in (0, 1]$ against human annotation effort $C_{\text{annot}}(x_i) > 0$. Depending on deployment priorities, the acquisition policy supports two operational regimes: (1)~\textbf{AE-Primate (Diversity-Driven)}, configuring $(\beta_1, \beta_2, \beta_3) = (0, 1, 0)$ with $C_{\text{annot}}(x_i)=1$ to maximize topological manifold coverage for out-of-distribution generalization; and (2)~\textbf{AE-Primate (Cost-Constrained)}, deploying $(\beta_1, \beta_2, \beta_3) = (0.5, 1.0, 0.5)$ and the crowding penalty $C_{\text{annot}}(x_i)$ to minimize human labeling labor under hard budget constraints.
+with policy coefficients $(\lambda_d, \lambda_s, \lambda_r) \in \mathbb{R}_{\ge 0}^3$ balancing epistemic uncertainty $U(x_i) \ge 0$, Core-Set diversity $D(x_i) \ge 0$, and site novelty $S(x_i) > 0$ against human annotation effort $C_{\text{annot}}(x_i) > 0$ and burst redundancy penalty $R(x_i \mid \mathcal{S})$. Depending on deployment priorities, the acquisition framework establishes two complementary operational regimes:
+\begin{enumerate}
+  \item \textbf{AE-Primate (Diversity-Driven):} Configured with $(\lambda_d, \lambda_s, \lambda_r) = (1.0, 0, 0)$, $U(x_i)=0$, and unit cost $C_{\text{annot}}(x_i)=1$. This mode optimizes pure K-Center facility location on the FastKAN latent manifold, maximizing topological coverage for superior out-of-distribution generalization.
+  \item \textbf{AE-Primate (Cost-Constrained):} Configured with $(\lambda_d, \lambda_s, \lambda_r) = (0.5, 0.3, 0.8)$ alongside the instance-crowding penalty $C_{\text{annot}}(x_i)$ and burst event quota $Q_{\max}=3$, rigorously penalizing troop clutter to minimize human labeling labor under hard budgets.
+\end{enumerate}
 
 \paragraph{Epistemic Detection Uncertainty $U(x_i)$}
 To quantify candidate uncertainty, we enable Monte Carlo Dropout ($p=0.1$) on intermediate neck layers across $T_{\text{MC}} = 5$ stochastic passes~\cite{gal2016dropout,kao2018localization}. For consensus detections $\hat{\mathcal{B}}_i = \{\hat{b}_1, \dots, \hat{b}_{M_i}\}$ from non-maximum suppression ($\tau_{\text{nms}}=0.45$), we compute predictive class entropy across primate species $\mathcal{C}$ ($|\mathcal{C}|=2$) and spatial localization variance $\sigma_{\text{IoU}}^2(\hat{b}_m) \ge 0$:
@@ -207,23 +221,20 @@ To quantify candidate uncertainty, we enable Monte Carlo Dropout ($p=0.1$) on in
 with scaling factor $\lambda_{\text{loc}} = 0.5$. Uninformative background frames lacking detections above $\tau_{\text{conf}}=0.25$ receive baseline entropy $\epsilon_0 = 10^{-4}$.
 
 \paragraph{Latent KAN-Manifold Core-Set Diversity $D(x_i)$}
-To suppress redundant sampling in feature space, we extract 512-dimensional post-KAN global feature vector $\mathbf{f}_i \in \mathbb{R}^{512}$ via spatial average pooling over $P_5$ bottleneck tensors:
+To suppress redundant sampling in feature space, we extract a 256-dimensional post-KAN global feature vector $\mathbf{f}_i \in \mathbb{R}^{256}$ via spatial average pooling over $P_5$ bottleneck tensors:
 \begin{equation}
-  D(x_i) = \min_{x_j \in \mathcal{L}_{t-1}} \left( 1 - \frac{\mathbf{f}_i^\top \mathbf{f}_j}{\|\mathbf{f}_i\|_2 \|\mathbf{f}_j\|_2} \right).
+  D(x_i \mid \mathcal{L}_{t-1} \cup \mathcal{S}) = \min_{x_j \in \mathcal{L}_{t-1} \cup \mathcal{S}} \sqrt{2 - 2 \frac{\mathbf{f}_i^\top \mathbf{f}_j}{\|\mathbf{f}_i\|_2 \|\mathbf{f}_j\|_2}}.
   \label{eq:diversity}
 \end{equation}
-This term implements a greedy submodular facility location objective~\cite{sener2018active}, enforcing dispersion across the FastKAN feature manifold.
+This term dynamically updates as exemplars are added to batch $\mathcal{S}$, implementing a greedy submodular facility location objective~\cite{sener2018active} that enforces geometric dispersion across the FastKAN feature manifold.
 
-\paragraph{Spatiotemporal Metadata Novelty $M_{\text{meta}}(x_i)$}
-Camera-trap captures exhibit severe spatial and temporal clustering. For camera station $s(x_i) \in \mathcal{S}_{\text{pool}}$ and capture timestamp $t(x_i)$, we define:
+\paragraph{Spatiotemporal Site and Burst Novelty Prior}
+Camera-trap captures exhibit severe spatial and temporal clustering. For camera station $s_i \triangleq s(x_i)$ and capture event $e_i \triangleq \text{evt}(x_i)$, we define site priority $S(x_i)$ and event redundancy $R(x_i \mid \mathcal{S})$:
 \begin{equation}
-\begin{aligned}
-  M_{\text{meta}}(x_i) = &\exp\!\left( -\gamma \frac{N_{\text{labeled}}(s(x_i))}{|\mathcal{L}_{t-1}|} \right) \\
-  &\cdot \mathbb{I}(\Delta t_{\text{burst}}(x_i) > \tau_{\text{burst}}),
-\end{aligned}
-\label{eq:meta}
+  S(x_i) = \frac{1}{\sqrt{N_{\text{site}}(s_i) + 1}}, \quad R(x_i \mid \mathcal{S}) = \frac{N_{\text{evt}}(e_i)}{N_{\text{evt}}(e_i) + 1},
+  \label{eq:meta}
 \end{equation}
-where $N_{\text{labeled}}(s) \in \mathbb{N}_0$ counts labeled frames from station $s$, $\gamma = 2.0$ penalizes over-represented sites, and burst indicator $\mathbb{I}(\cdot)$ downweights candidate $x_i$ to $0.1$ if captured within $\tau_{\text{burst}} = 5$\,minutes of another frame in batch $\mathcal{S}_t$.
+where $N_{\text{site}}(s)$ and $N_{\text{evt}}(e)$ count labeled and currently queued frames from station $s$ and burst event $e$. Frames exceeding the batch event quota ($Q_{\max}=3$) are excluded, preventing redundant bursts from saturating the cycle budget.
 
 \paragraph{Crowding-Penalized Annotation Effort $C_{\text{annot}}(x_i)$}
 To capture super-linear human annotation overhead under visual crowding~\cite{papadopoulos2017training,su2012crowdsourcing}, we formulate the cost model:
@@ -231,7 +242,7 @@ To capture super-linear human annotation overhead under visual crowding~\cite{pa
   C_{\text{annot}}(x_i) = c_0 + c_1 \hat{N}_{\text{boxes}}(x_i) + c_2 \overline{\operatorname{IoU}}_{\text{pairwise}}(x_i),
   \label{eq:cost}
 \end{equation}
-where $\hat{N}_{\text{boxes}}(x_i) \in \mathbb{N}_0$ is predicted box count, $\overline{\operatorname{IoU}}_{\text{pairwise}}(x_i) \in [0, 1]$ is mean pairwise IoU overlap, and $(c_0, c_1, c_2) = (1.0, 0.5, 0.25) \in \mathbb{R}_{\ge 0}^3$ calibrate base review, per-box delineation, and crowding occlusion. Solitary captures yield $C_{\text{annot}} = 1.5$, whereas dense troops ($N=12$) exceed $C_{\text{annot}} > 7.5$, penalizing redundant crowded frames.
+where $\hat{N}_{\text{boxes}}(x_i) \in \mathbb{N}_0$ is predicted box count, $\overline{\operatorname{IoU}}_{\text{pairwise}}(x_i) \in [0, 1]$ is mean pairwise IoU overlap, and $(c_0, c_1, c_2) = (1.0, 0.5, 0.25) \in \mathbb{R}_{\ge 0}^3$ calibrate base review, per-box delineation, and crowding occlusion. Solitary captures yield $C_{\text{annot}} = 1.5$, whereas dense troops ($N=12$) exceed $C_{\text{annot}} > 7.5$, penalizing redundant crowded frames. Crucially, $C_{\text{annot}}(x_i) \ge c_0 = 1.0$ provides an intrinsic regularisation floor, ensuring that early-stage detector recall noise never causes candidate division instabilities.
 
 Algorithm~\ref{alg:aeprimate} summarizes the complete AE-Primate active learning procedure.
 
@@ -266,28 +277,15 @@ All empirical evaluations are conducted on the Nkhotakota Primate Dataset, compr
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/figure1_al_efficiency.pdf}
-\caption{Multi-Cycle Active Learning Trajectories on Held-Out Validation Stations ($\mathcal{D}_\text{val}$, 5,560 frames, Mean $\pm$ SEM over $N=5$ independent seeds). (a)~$m\text{AP}_{50\text{-}95}$ vs.\ labeled frame budget, demonstrating accuracy leadership by AE-Primate (Diversity); (b)~Cumulative bounding boxes queried vs.\ budget, highlighting AE-Primate (Cost-Aware)'s statistically significant reduction of 63.4 bounding boxes ($-5.81\%$, paired $t$-test $p=0.008$) and 70.2\% variance reduction.}
+\caption{Multi-Cycle Active Learning Trajectories on Held-Out Validation Stations ($\mathcal{D}_\text{val}$, 5,560 frames, Mean $\pm$ SEM over $N=5$ independent seeds). (a)~$m\text{AP}_{50\text{-}95}$ vs.\ labeled frame budget, demonstrating accuracy leadership by AE-Primate (Diversity); (b)~Cumulative bounding boxes queried vs.\ budget, highlighting AE-Primate (Cost-Aware)'s statistically significant reduction of 59.8 bounding boxes ($-5.48\%$, paired $t$-test $p=0.011$) and 60.7\% standard deviation reduction (84.6\% variance reduction).}
 \label{fig:al_efficiency}
 \end{figure}
 
-To ensure complete scientific integrity and prevent spatial background memorization~\cite{beery2018recognition}, we enforce a strict, zero-leakage geographic partition at the camera-station level:
-\begin{itemize}
-  \item \textbf{Unlabelled Candidate Pool $\mathcal{U}$:} 35 stations (30,620 frames), serving as the candidate pool for active learning.
-  \item \textbf{Held-Out Validation Split $\mathcal{D}_\text{val}$:} 7 stations (5,560 frames), utilized exclusively for active cycle tracking and model checkpoint selection.
-  \item \textbf{Sealed Test Split $\mathcal{D}_\text{test}$:} 7 stations (3,206 frames), held in strict isolation and evaluated only once per final model checkpoint.
-\end{itemize}
-No camera station or GPS coordinate appears in more than one partition.
+To ensure complete scientific integrity and prevent spatial background memorization~\cite{beery2018recognition}, we enforce a strict, zero-leakage geographic partition at the camera-station level: (i)~\textbf{Unlabelled Candidate Pool $\mathcal{U}$:} 35 stations (30,620 frames) for active learning; (ii)~\textbf{Held-Out Validation Split $\mathcal{D}_\text{val}$:} 7 stations (5,560 frames) for cycle tracking and checkpoint selection; and (iii)~\textbf{Sealed Test Split $\mathcal{D}_\text{test}$:} 7 stations (3,206 frames), held in strict isolation and evaluated only once per final model checkpoint. No camera station or GPS coordinate appears in more than one partition.
 
 \subsection{Architectural Benchmark on Held-Out Test Locations}
 \label{sec:benchmark}
-We benchmark YOLO11n-F16 against five matched edge controls and generalist baselines on $\mathcal{D}_\text{test}$ (Table~\ref{tab:model_comparison}, Figure~\ref{fig:pareto}):
-\begin{itemize}
-  \item \textbf{B0}: Standard YOLO11n with CNN bottleneck blocks.
-  \item \textbf{B1}: YOLO11-KAN2 with B-spline KAN layers ($K=8$).
-  \item \textbf{C0}: Matched-capacity convolutional control with identical channel widths.
-  \item \textbf{F4, F8}: FastKAN variants with $K=4$ and $K=8$ Gaussian RBF bases.
-  \item \textbf{MDv6-C}: MegaDetector v6 (YOLOv9-c, 25.5\,M parameters)~\cite{beery2019efficient}, serving as an unadapted zero-shot generalist prior.
-\end{itemize}
+We benchmark YOLO11n-F16 against five matched edge controls and generalist baselines on $\mathcal{D}_\text{test}$ (Table~\ref{tab:model_comparison}, Figure~\ref{fig:pareto}): standard YOLO11n with CNN bottlenecks (B0), YOLO11-KAN2 with B-splines (B1), matched-capacity convolutional control (C0), FastKAN variants with $K \in \{4, 8\}$ Gaussian RBF bases (F4, F8), and MegaDetector v6 (MDv6-C, 25.5\,M parameters)~\cite{beery2019efficient} as an unadapted zero-shot generalist wildlife prior.
 
 As documented in Table~\ref{tab:model_comparison}, YOLO11n-F16 achieves \textbf{0.5626\,$m\text{AP}_{50\text{-}95}$} on unseen test camera stations, outperforming the standard YOLO11n baseline (B0, 0.5477) by \textbf{+1.49\%} and the matched convolutional control (C0, 0.5478) by \textbf{+1.48\%}. The monotonic accuracy progression across basis counts ($0.5508 \to 0.5525 \to 0.5626$ for $K=4, 8, 16$) confirms that expanding Gaussian RBF spline bases directly improves non-linear primate texture discrimination in dense woodland foliage. B-spline KAN (B1) achieves only 0.5447 mAP, demonstrating that Gaussian RBF kernels provide a superior spatial inductive bias compared to piecewise polynomial splines. MegaDetector v6 (MDv6-C) achieves 0.1255 mAP in zero-shot evaluation without local adaptation, highlighting that generalist terrestrial wildlife foundation models fail to transfer out-of-the-box to cryptic arboreal primates under heavy miombo canopy camouflage.
 
@@ -300,13 +298,13 @@ As documented in Table~\ref{tab:model_comparison}, YOLO11n-F16 achieves \textbf{
 \toprule
 Acquisition Policy & $\text{AUBC}_{50\text{-}95}$ & Sealed $\mathcal{D}_\text{test}$ $m\text{AP}$ & Cum.\ Boxes & Box Economy \\
 \midrule
-Random Uniform (Passive)      & 0.4151\,$\pm$\,0.0022 & 0.4251\,$\pm$\,0.0058 & 1091.6\,$\pm$\,26.5 & Baseline (0) \\
-Epistemic Uncertainty         & 0.4136\,$\pm$\,0.0035 & 0.4155\,$\pm$\,0.0084 & 1069.2\,$\pm$\,24.1 & $-$22.4 ($-$2.1\%) \\
-\textbf{AE-Primate (Diversity)}  & \textbf{0.4226\,$\pm$\,0.0037}$^*$ & \textbf{0.4300\,$\pm$\,0.0045}$^*$ & 1059.5\,$\pm$\,2.4 & $-$32.1 ($-$2.9\%) \\
-\textbf{AE-Primate (Cost-Aware)} & 0.4127\,$\pm$\,0.0025 & 0.4119\,$\pm$\,0.0031 & \textbf{1028.2\,$\pm$\,7.9}$^\dagger$ & \textbf{$-$63.4 ($-$5.8\%)} \\
+Random Uniform (Passive)      & 0.4151\,$\pm$\,0.0022 & 0.4251\,$\pm$\,0.0058 & 1091.6\,$\pm$\,11.9 & Baseline (0) \\
+Epistemic Uncertainty         & 0.4136\,$\pm$\,0.0035 & 0.4155\,$\pm$\,0.0084 & 1072.4\,$\pm$\,10.0 & $-$19.2 ($-$1.8\%) \\
+\textbf{AE-Primate (Diversity)}  & \textbf{0.4226\,$\pm$\,0.0037}$^*$ & \textbf{0.4300\,$\pm$\,0.0045}$^*$ & 1065.6\,$\pm$\,6.1 & $-$26.0 ($-$2.4\%) \\
+\textbf{AE-Primate (Cost-Aware)} & 0.4127\,$\pm$\,0.0025 & 0.4119\,$\pm$\,0.0031 & \textbf{1031.8\,$\pm$\,4.7}$^\dagger$ & \textbf{$-$59.8 ($-$5.5\%)} \\
 \bottomrule
 \multicolumn{5}{l}{\footnotesize $^*$Statistically significant OOD gain vs.\ passive random ($p < 0.05$, paired $t$-test).} \\
-\multicolumn{5}{l}{\footnotesize $^\dagger$Statistically significant box reduction ($p = 0.008$) with 70.2\% variance reduction ($\sigma = 7.9$ vs.\ $26.5$).}
+\multicolumn{5}{l}{\footnotesize $^\dagger$Statistically significant box reduction ($p = 0.011$) with 60.7\% std.\ dev.\ reduction ($\sigma = 10.4$ vs.\ $26.5$).}
 \end{tabular}%
 }
 \end{table}
@@ -322,10 +320,10 @@ All models retrain from base COCO-80 weights at each cycle to maintain rigorous 
 
 The results, presented in Table~\ref{tab:al_benchmark} and Figure~\ref{fig:al_efficiency}, reveal a complementary dual-objective Pareto trade-off rather than an uncalibrated one-dimensional ranking:
 \begin{enumerate}
-  \item \textbf{AE-Primate (Diversity) Dominates OOD Generalization:} When configured for maximal topological manifold coverage, AE-Primate achieves the highest validation AUBC ($0.4226 \pm 0.0037$) and highest generalization on sealed test stations ($0.4300 \pm 0.0045$, Table~\ref{tab:al_benchmark}), outperforming passive random sampling with statistical significance ($p = 0.011$ on $\mathcal{D}_\text{test}$, paired $t$-test across identical seeds). By greedily maximizing dispersion across the 512-dimensional FastKAN feature manifold, diversity sampling captures rare visual archetypes across camera stations without relying on uncalibrated predictive uncertainties.
+  \item \textbf{AE-Primate (Diversity) Dominates OOD Generalization:} When configured for maximal topological manifold coverage, AE-Primate achieves the highest validation AUBC ($0.4226 \pm 0.0037$) and highest generalization on sealed test stations ($0.4300 \pm 0.0045$, Table~\ref{tab:al_benchmark}), outperforming passive random sampling with statistical significance ($p = 0.011$ on $\mathcal{D}_\text{test}$, paired $t$-test across identical seeds). By greedily maximizing dispersion across the 256-dimensional FastKAN feature manifold, diversity sampling captures rare visual archetypes across camera stations without relying on uncalibrated predictive uncertainties.
   \item \textbf{Epistemic Uncertainty Suffers from Background Covariate Shift:} Detection entropy fails to outperform uniform random sampling ($\text{AUBC} = 0.4136$ vs.\ $0.4151$; test $m\text{AP} = 0.4155$ vs.\ $0.4251$). In camera traps, arboreal background shift elevates predictive entropy on shifting tree canopies and dappled solar glare, misdirecting the acquisition policy toward empty background false alarms.
-  \item \textbf{AE-Primate (Cost-Aware) Delivers Unprecedented Labeling Economy:} Under austere field budgets, AE-Primate (Cost-Aware) maintains statistical accuracy parity with passive random sampling on validation stations ($\text{AUBC} = 0.4127 \pm 0.0025$ vs.\ $0.4151 \pm 0.0022$, paired $t(4) = -0.717$, $p = 0.513$) and sealed test stations ($0.4119 \pm 0.0031$ vs.\ $0.4251 \pm 0.0058$, $p = 0.156$), while achieving a statistically significant reduction of \textbf{63.4 bounding boxes ($-5.81\%$, paired $t$-test $p = 0.008$)}.
-  \item \textbf{Budget Predictability via Variance Suppression:} Crucially for field deployments, AE-Primate (Cost-Aware) suppresses cross-seed box-count standard deviation from $\sigma = 26.5$ (Random) down to $\sigma = 7.9$---a \textbf{70.2\% variance reduction}. This ensures field conservation teams can plan labeling campaigns without risk of budgetary blowouts caused by sampling high-density outlier troops.
+  \item \textbf{AE-Primate (Cost-Aware) Delivers Unprecedented Labeling Economy:} Under austere field budgets, AE-Primate (Cost-Aware) maintains statistical accuracy parity with passive random sampling on validation stations ($\text{AUBC} = 0.4127 \pm 0.0025$ vs.\ $0.4151 \pm 0.0022$, paired $t(4) = -0.717$, $p = 0.513$) and sealed test stations ($0.4119 \pm 0.0031$ vs.\ $0.4251 \pm 0.0058$, $p = 0.156$), while achieving a statistically significant reduction of \textbf{59.8 bounding boxes ($-5.48\%$, paired $t$-test $t(4) = -4.53$, $p = 0.0105$)}.
+  \item \textbf{Budget Predictability via Variance Suppression:} Crucially for field deployments, AE-Primate (Cost-Aware) suppresses cross-seed box-count standard deviation from $\sigma = 26.5$ (Random) down to $\sigma = 10.4$---a \textbf{60.7\% standard deviation reduction (84.6\% variance reduction)}. This ensures field conservation teams can plan labeling campaigns without risk of budgetary blowouts caused by sampling high-density outlier troops.
 \end{enumerate}
 
 \begin{figure}[t]
@@ -361,21 +359,17 @@ A fundamental insight of this work is that active learning in conservation camer
 This domain discrepancy formalizes why Monte Carlo Dropout epistemic uncertainty fails: predictive entropy $H(Y|X, \mathcal{D})$ is dominated by environmental background divergence rather than primate morphological informativeness. The uncertainty sampler routinely expends annotation budget on empty background frames containing novel arboreal textures, dappled solar glare, or windblown foliage. In contrast, latent FastKAN Core-Set Diversity operates directly on the geometry of the representation manifold: by enforcing submodular dispersion across candidate feature embeddings, it selects topologically diverse visual archetypes that generalize reliably across unseen camera placements ($0.4300$ test mAP).
 
 \subsection{The Trilemma of Ecological Active Learning}
-Our empirical trajectories formalize an inherent trilemma in wildlife active learning between: (i)~\textbf{Out-of-Distribution Generalization}, (ii)~\textbf{Cumulative Annotation Labor}, and (iii)~\textbf{Budgetary Variance}. Pure diversity sampling maximizes spatial transfer but disregards human effort, acquiring 31.3 more bounding boxes than AE-Primate. Conversely, AE-Primate optimizes the cost-generalization trade-off: by incorporating a crowding penalty ($C_{\text{annot}}$), it queries fewer boxes per image, saving 63.4 bounding boxes ($-5.81\%$, $p=0.008$) and suppressing cross-seed box-count standard deviation by 70.2\% while maintaining parity with random sampling. For conservation agencies operating under fixed grant budgets, eliminating budgetary blowouts caused by sampling dense troop clusters is often more critical than fractional gains in test mAP.
+Our empirical trajectories formalize an inherent trilemma in wildlife active learning between: (i)~\textbf{Out-of-Distribution Generalization}, (ii)~\textbf{Cumulative Annotation Labor}, and (iii)~\textbf{Budgetary Variance}. Pure diversity sampling maximizes spatial transfer but disregards human effort, acquiring 33.8 more bounding boxes than AE-Primate. Conversely, AE-Primate optimizes the cost-generalization trade-off: by incorporating a crowding penalty ($C_{\text{annot}}$), it queries fewer boxes per image, saving 59.8 bounding boxes ($-5.48\%$, $p=0.011$) and suppressing cross-seed box-count standard deviation by 60.7\% while maintaining parity with random sampling. For conservation agencies operating under fixed grant budgets, eliminating budgetary blowouts caused by sampling dense troop clusters is often more critical than fractional gains in test mAP.
 
 \subsection{Practical Field Economics and Operational Guidance}
-In field environments where expert annotators require 12--18\,s per bounding box~\cite{norouzzadeh2021deep,papadopoulos2017training}, saving 63.4 bounding boxes across 900 frames translates to multiple hours of expert biologist labor saved per active campaign. For conservation deployments, we recommend: (i) employing KAN Core-Set Diversity when human labeling budget is flexible and out-of-distribution accuracy is paramount, and (ii) deploying AE-Primate's crowding-penalized policy when annotation hours are strictly capped and budgetary variance must be contained.
+In field environments where expert annotators require 12--18\,s per bounding box~\cite{norouzzadeh2021deep,papadopoulos2017training}, saving 59.8 bounding boxes across 900 frames translates to multiple hours of expert biologist labor saved per active campaign. For conservation deployments, we recommend: (i) employing KAN Core-Set Diversity when human labeling budget is flexible and out-of-distribution accuracy is paramount, and (ii) deploying AE-Primate's crowding-penalized policy when annotation hours are strictly capped and budgetary variance must be contained.
 
 \subsection{Limitations}
-\begin{enumerate}
-  \item \textbf{Single Geographic Sanctuary:} All captures originate from Nkhotakota Wildlife Reserve. Multi-reserve validation across West and Central African ecosystems represents an important direction for future research.
-  \item \textbf{Taxonomic Scope:} The current benchmark evaluates two sympatric primates (yellow baboon and vervet monkey). Expanding the formulation to mixed ungulate and carnivore communities will test multi-class cost calibration.
-  \item \textbf{Synthesized Human Cost Model:} While $C_{\text{annot}}$ is grounded in empirical annotator literature~\cite{papadopoulos2017training,su2012crowdsourcing}, in-situ stopwatch timing of field biologists will provide refined calibration.
-\end{enumerate}
+\textit{1) Single Geographic Sanctuary:} All captures originate from Nkhotakota Wildlife Reserve; multi-reserve evaluation across West and Central African biomes is planned. \textit{2) Taxonomic Scope:} The benchmark evaluates two sympatric primates; expanding to mixed ungulate communities will test multi-class cost calibration. \textit{3) Synthesized Cost Model:} While $C_{\text{annot}}$ is grounded in empirical annotator literature~\cite{papadopoulos2017training,su2012crowdsourcing}, in-situ stopwatch timing of field biologists will provide refined calibration.
 
 %% ─────────────────────────────────────────────────────────────────────────────
 \section{Conclusion}
-We introduced \textbf{AE-Primate}, an end-to-end framework combining the ultra-lightweight YOLO11n-F16 detector with a cost-aware active learning policy. Evaluated on 40,743 camera-trap frames from Nkhotakota Wildlife Reserve under a strict location-disjoint protocol, YOLO11n-F16 establishes superior generalization (+1.49\% mAP over CNN baselines) at sub-3\,M parameter scale. Our multi-seed active learning study deconstructs the failure modes of predictive uncertainty under spatial covariate shift, reveals KAN Core-Set Diversity as the premier policy for out-of-distribution transfer ($0.4300$ test mAP), and demonstrates that crowding-penalized acquisition saves \textbf{63.4 cumulative bounding boxes ($-5.81\%$, $p=0.008$)} while suppressing budgeting variance by \textbf{70.2\%}. AE-Primate provides an open, reproducible blueprint for sustainable wildlife monitoring in resource-limited protected areas.
+We introduced \textbf{AE-Primate}, an end-to-end framework combining the ultra-lightweight YOLO11n-F16 detector with a cost-aware active learning policy. Evaluated on 40,743 camera-trap frames from Nkhotakota Wildlife Reserve under a strict location-disjoint protocol, YOLO11n-F16 establishes superior generalization (+1.49\% mAP over CNN baselines) at sub-3\,M parameter scale. Our multi-seed active learning study deconstructs the failure modes of predictive uncertainty under spatial covariate shift, reveals KAN Core-Set Diversity as the premier policy for out-of-distribution transfer ($0.4300$ test mAP), and demonstrates that crowding-penalized acquisition saves \textbf{59.8 cumulative bounding boxes ($-5.48\%$, $p=0.011$)} while suppressing budgeting standard deviation by \textbf{60.7\%} (84.6\% variance reduction). AE-Primate provides an open, reproducible blueprint for sustainable wildlife monitoring in resource-limited protected areas.
 
 \ifanonymous
 \section*{Reproducibility Statement}
@@ -566,6 +560,7 @@ Unlike standard multi-layer perceptrons where neuron activations are coupled thr
   \langle \phi_j, \phi_k \rangle &= \int_{-1}^1 \exp\!\left(-\frac{(u - \mu_j)^2 + (u - \mu_k)^2}{2\sigma^2}\right) du \\
   &\approx \sqrt{\pi}\sigma \exp\!\left(-\frac{(\mu_j - \mu_k)^2}{4\sigma^2}\right).
 \end{aligned}
+\label{eq:inner_prod}
 \end{equation}
 For adjacent bases ($|j - k| = 1$), the overlap is $\exp(-1/4) \approx 0.7788$, while for distant bases ($|j - k| \ge 3$), the overlap decays rapidly to $\le \exp(-9/4) \approx 0.1054$. This localized compact support allows FastKAN layers to approximate high-frequency non-linear surface variations (such as camouflaged fur patterns against dense leaves) without inducing global catastrophic interference across unactivated feature regions.
 
@@ -577,6 +572,7 @@ All models were trained using stochastic gradient descent (SGD) with Nesterov mo
 
 \begin{table}[h]
 \centering
+\renewcommand{\arraystretch}{0.92}
 \caption{Hyperparameter Specification for Active Detector Training.}
 \label{tab:hyperparams}
 \resizebox{\columnwidth}{!}{%
@@ -643,6 +639,7 @@ The Nkhotakota Wildlife Reserve encompasses diverse vegetation zones ranging fro
 
 \begin{table}[h]
 \centering
+\renewcommand{\arraystretch}{0.92}
 \caption{Environmental Characteristics of Held-Out Camera Stations in Nkhotakota Reserve.}
 \label{tab:stations}
 \resizebox{\columnwidth}{!}{%
@@ -673,18 +670,18 @@ K18 & Test & Broken Miombo Scrub   & Moderate (50\%) & Cryptic postures \\
 \section{Broader Impact, Ethics, and Edge Energy Footprint}
 \label{app:impact}
 
-\subsection{Conservation Ethics and Wildlife Welfare}
-Camera-trap surveillance is entirely passive and non-invasive, minimizing disruption to sensitive primate populations (yellow baboon \emph{Papio cynocephalus} and vervet monkey \emph{Chlorocebus pygerythrus}). The Nkhotakota dataset complies with all reserve conservation permits and national wildlife research guidelines in Malawi. Incidental human captures are scrubbed prior to training to guarantee privacy.
-
-\subsection{Computational Carbon Footprint}
-Experimental runs were conducted on dedicated NVIDIA A40 GPUs (300\,W TDP). Total computational effort across architecture search, 20 active trajectories (5 cycles $\times$ 20 epochs), and sealed test evaluations amounted to approximately 242 GPU-hours. Based on regional grid carbon intensity ($\approx 0.38$\,kg CO$_2$e/kWh), emissions are estimated at 27.6\,kg CO$_2$e, fully offset through certified wildlife conservation credits. Checkpoints originate from base COCO-80 pretrained weights.
-
 \balance
 
-\subsection{Field Deployment and Hardware Latency}
-For deployment on solar-powered camera nodes, YOLO11n-F16 operates well within edge compute envelopes. When exported to FP16 TensorRT on the NVIDIA Jetson Orin Nano (15\,W mode), the detector achieves 32.4\,FPS at $640 \times 640$ resolution with a runtime memory footprint below 450\,MB, permitting concurrent telemetry execution. Field nodes query annotations only when acquisition policies trigger high informativeness, conserving battery power and storage while maximizing discovery.
+\paragraph{Conservation Ethics and Wildlife Welfare}
+Camera-trap surveillance is non-invasive, minimizing disruption to sensitive primate populations (yellow baboon \emph{Papio cynocephalus} and vervet monkey \emph{Chlorocebus pygerythrus}). The Nkhotakota dataset complies with all reserve permits and wildlife research guidelines in Malawi. Incidental human captures are scrubbed prior to training to guarantee privacy.
 
-\subsection{Artifact Availability and Open Science}
-All experimental artifacts—including training configurations, location-disjoint manifests, active evaluation trajectories across all 5 seeds, and trained checkpoints—are licensed under MIT and openly accessible at: \ifanonymous \url{https://anonymous.4open.science/r/AE_Primate_Detection-anon}\else \url{https://github.com/mobashirsifat123/AE_Primate_Detection}\fi.
+\paragraph{Computational Carbon Footprint}
+Runs were conducted on dedicated NVIDIA A40 GPUs (300\,W TDP). Total compute across architecture search, 20 active trajectories (5 cycles $\times$ 20 epochs), and sealed test evaluations was $\approx$242 GPU-hours. Based on regional grid carbon intensity ($\approx 0.38$\,kg CO$_2$e/kWh), emissions are estimated at 27.6\,kg CO$_2$e, fully offset via certified wildlife conservation credits. Checkpoints originate from base COCO-80 pretrained weights.
+
+\paragraph{Field Deployment and Hardware Latency}
+For deployment on solar camera nodes, YOLO11n-F16 operates well within edge compute envelopes. Exported to FP16 TensorRT on the NVIDIA Jetson Orin Nano (15\,W mode), the detector achieves 32.4\,FPS at $640 \times 640$ resolution with runtime memory below 450\,MB, permitting concurrent telemetry execution. Field nodes query annotations only when acquisition policies trigger high informativeness, conserving battery power while maximizing discovery.
+
+\paragraph{Artifact Availability and Open Science}
+All experimental artifacts—configurations, manifests, active trajectories across 5 seeds, and checkpoints—are licensed under MIT and openly accessible at: \ifanonymous \url{https://anonymous.4open.science/r/AE_Primate_Detection-anon}\else \url{https://github.com/mobashirsifat123/AE_Primate_Detection}\fi.
 
 \end{document}

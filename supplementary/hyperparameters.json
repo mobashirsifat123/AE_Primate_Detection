@@ -77,27 +77,31 @@
     "step_budget_delta": 150,
     "weight_transfer_across_cycles": false,
     "decontamination_checkpoint": "yolo11n.pt (COCO-80 pretrained, zero wildlife pre-exposure)",
-    "policy_formula": "V_i = (U(x_i)^beta_1 * D(x_i)^beta_2 * M_meta(x_i)^beta_3) / C_annot(x_i)",
-    "policy_weights": {
-      "beta_1_uncertainty": 1.0,
-      "beta_2_diversity": 0.5,
-      "beta_3_metadata": 0.3
+    "policy_formula": "V(x_i | S) = [U(x_i) + lambda_d * D(x_i | L union S) + lambda_s * S(x_i)] / (C_annot(x_i) + epsilon) - lambda_r * R(x_i | S)",
+    "policy_coefficients": {
+      "lambda_d_diversity": 0.5,
+      "lambda_s_site_novelty": 0.3,
+      "lambda_r_burst_redundancy": 0.8,
+      "burst_event_quota_Qmax": 3
     },
     "uncertainty_estimation": {
       "method": "MC_Dropout",
       "stochastic_passes": 5,
       "dropout_rate": 0.1,
       "components": ["classification_entropy", "iou_localization_variance"],
-      "lambda_loc": 1.0
+      "lambda_loc": 0.5
     },
     "diversity_estimation": {
-      "feature_source": "FastKAN_P5_Bottleneck",
+      "feature_source": "FastKAN_P5_Bottleneck_256D",
+      "feature_dim": 256,
       "distance_metric": "cosine_distance",
-      "selection_algorithm": "core_set_k_center_greedy"
+      "selection_algorithm": "submodular_k_center_facility_location"
     },
-    "cost_penalty": {
-      "denominator": "predicted_bounding_box_count",
-      "epsilon_floor": 1.0
+    "cost_model": {
+      "formula": "C_annot(x_i) = c0 + c1 * N_boxes + c2 * mean_pairwise_iou",
+      "c0_inspection_floor": 1.0,
+      "c1_per_box_cost": 0.5,
+      "c2_crowding_penalty": 0.25
     }
   },
   "evaluation": {
