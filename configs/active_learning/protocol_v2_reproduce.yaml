@@ -1,0 +1,52 @@
+# AE-Primate Active-Learning Protocol v2.0 Replication Configuration
+# Compatible with local GPU workstations and compute clusters
+
+detector:
+  architecture_yaml: models/yamls/yolo11n-F16.yaml
+  checkpoint_path: yolo11n.pt  # Standard COCO pretrained YOLO11n weights
+  imgsz: 640
+  device: 0
+  conf_threshold: 0.25
+  iou_threshold: 0.50
+
+dataset:
+  # Path to dataset splits and indices (e.g. Wildlife Conservation Society / Nkhotakota Reserve)
+  data_yaml: data/nkhotakota/data.yaml
+  index_json: data/nkhotakota/index.json
+  train_manifest: data/nkhotakota/train.txt
+  val_manifest: data/nkhotakota/val.txt
+  images_dir: data/nkhotakota/images
+  labels_dir: data/nkhotakota/labels
+
+active_learning:
+  seed: 42
+  initial_budget: 300
+  cycle_budget: 150
+  total_cycles: 4
+  strategy: proposed  # Options: [random, uncertainty, diversity, proposed]
+  
+  # AE-Primate Cost-Aware Acquisition Policy Coefficients
+  proposed_weights:
+    lambda_d: 0.5            # Foreground diversity core-set weight
+    lambda_s: 0.3            # Site-balancing equity weight
+    lambda_r: 0.8            # Temporal burst event redundancy penalty
+    cost_epsilon: 0.001      # Numerical stability epsilon for cost normalization
+    alpha_disagree: 0.4      # Weak/strong prediction multi-head disagreement weight
+    event_delta_seconds: 60  # Camera-trap burst grouping window (seconds)
+    cost_base: 1.0           # Baseline human inspection overhead per frame
+    cost_box_weight: 0.5     # Annotation cost weight per bounding box
+    cost_crowd_weight: 0.25  # Crowding / overlapping box penalty factor
+    max_event_quota: 3       # Max allowed frames queried from a single burst event
+
+training:
+  epochs: 40
+  batch: 64
+  imgsz: 640
+  optimizer: SGD
+  lr0: 0.01
+  patience: 50
+  workers: 4
+  deterministic: true
+  save: true
+  project_root: experiments/runs
+  reports_root: experiments/reports

@@ -1,0 +1,49 @@
+# YOLO11n-B0 Active-Learning Configuration (Cross-Architecture Ablation)
+
+detector:
+  architecture_yaml: "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/YOLO-KAN/ultralytics/cfg/models/11/yolo11.yaml"
+  checkpoint_path: "/mnt/nas/users/moba/projects/AE_Primate_Detection/yolo11n.pt"
+  imgsz: 640
+  device: "2"
+  conf_threshold: 0.25
+  iou_threshold: 0.50
+
+dataset:
+  data_yaml: "/mnt/nas/users/moba/projects/AE_Primate_Detection/datasets/nkhotakota/data.yaml"
+  index_json: "/mnt/nas/users/moba/projects/AE_Primate_Detection/datasets/nkhotakota/index.json"
+  train_manifest: "/home/moba/data/primate_yolo/nkhotakota_train.txt"
+  val_manifest: "/home/moba/data/primate_yolo/nkhotakota_val.txt"
+  images_dir: "/home/moba/data/primate_yolo/images"
+  labels_dir: "/home/moba/data/primate_yolo/labels"
+
+active_learning:
+  seed: 42
+  initial_budget: 300
+  cycle_budget: 150
+  total_cycles: 4
+  strategy: "proposed"
+
+  proposed_weights:
+    lambda_d: 0.5
+    lambda_s: 0.3
+    lambda_r: 0.8
+    cost_epsilon: 0.001
+    alpha_disagree: 0.4
+    event_delta_seconds: 60
+    cost_base: 1.0
+    cost_box_weight: 0.5
+    cost_crowd_weight: 0.25
+    max_event_quota: 3
+
+training:
+  epochs: 20
+  batch: 64
+  imgsz: 640
+  optimizer: "SGD"
+  lr0: 0.01
+  patience: 100
+  workers: 4
+  deterministic: true
+  save: true
+  project_root: "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_pilot"
+  reports_root: "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/reports/primate_al"

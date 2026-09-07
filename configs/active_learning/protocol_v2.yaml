@@ -1,0 +1,51 @@
+# PrimateScope Active-Learning Protocol v2.0 Configuration
+# Clean, uncontaminated initialization from pure COCO yolo11n.pt
+
+detector:
+  architecture_yaml: /mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/YOLO-KAN/ultralytics/cfg/models/11/yolo11n-F16.yaml
+  checkpoint_path: /mnt/nas/users/moba/projects/AE_Primate_Detection/yolo11n.pt
+  imgsz: 640
+  device: 3
+  conf_threshold: 0.25
+  iou_threshold: 0.50
+
+dataset:
+  data_yaml: /mnt/nas/users/moba/projects/AE_Primate_Detection/datasets/nkhotakota/data.yaml
+  index_json: /mnt/nas/users/moba/projects/AE_Primate_Detection/datasets/nkhotakota/index.json
+  train_manifest: /home/moba/data/primate_yolo/nkhotakota_train.txt
+  val_manifest: /home/moba/data/primate_yolo/nkhotakota_val.txt
+  images_dir: /home/moba/data/primate_yolo/images
+  labels_dir: /home/moba/data/primate_yolo/labels
+
+active_learning:
+  seed: 42
+  initial_budget: 300
+  cycle_budget: 150
+  total_cycles: 4
+  strategy: proposed  # random, uncertainty, diversity, proposed
+  
+  # Method specific coefficients
+  proposed_weights:
+    lambda_d: 0.5            # Foreground diversity weight
+    lambda_s: 0.3            # Site balancing weight
+    lambda_r: 0.8            # Event redundancy penalty
+    cost_epsilon: 0.001      # Division epsilon for cost normalization
+    alpha_disagree: 0.4      # Weak/strong prediction disagreement weight
+    event_delta_seconds: 60  # Burst grouping interval (seconds)
+    cost_base: 1.0           # Base inspection cost proxy per image
+    cost_box_weight: 0.5     # Cost proxy per bounding box
+    cost_crowd_weight: 0.25  # Cost proxy for box crowding / overlap
+    max_event_quota: 3       # Max frames allowed per event in a single batch
+
+training:
+  epochs: 40
+  batch: 64
+  imgsz: 640
+  optimizer: SGD
+  lr0: 0.01
+  patience: 50
+  workers: 4
+  deterministic: true
+  save: true
+  project_root: /mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2
+  reports_root: /mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/reports/primate_al_v2

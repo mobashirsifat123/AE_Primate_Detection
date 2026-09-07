@@ -10,6 +10,12 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR / "YOLO-KAN"))
 sys.path.insert(0, str(ROOT_DIR))
 
+try:
+    from models.modules import register_fastkan_modules
+    register_fastkan_modules()
+except ImportError:
+    pass
+
 import torch
 import numpy as np
 from ultralytics import YOLO

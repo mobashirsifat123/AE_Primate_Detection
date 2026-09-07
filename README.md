@@ -50,17 +50,54 @@ Official code release and reproduction repository for **AE-Primate**, an end-to-
 ## 📁 Repository Structure
 
 ```
-paper/
-├── main.tex                             # Complete LaTeX source (IEEE format, 10 pages)
-├── main.pdf                             # Compiled 10-page camera-ready paper
-├── figures/                             # Vector PDF figures & visual overlays
-│   ├── figure1_al_efficiency.pdf        # AL accuracy & cumulative box trajectories
-│   ├── figure2_pareto_frontier.pdf      # Latency & parameter Pareto frontier
-│   ├── figure3_spatial_generalization.pdf # Per-station spatial generalization
-│   ├── figure4_qualitative_detections.pdf# Field visual detection overlays
-│   └── tables.tex                       # LaTeX tables
-├── references.bib                       # Verified BibTeX bibliography
-└── README.md                            # Reproduction instructions
+AE_Primate_Detection/
+├── paper/                                   # 10-page camera-ready & anonymous review manuscripts
+│   ├── main.tex                             # Complete LaTeX source (IEEEtran format, 10 pages)
+│   ├── main.pdf                             # Compiled 10-page camera-ready paper
+│   ├── main_anonymous.pdf                   # Double-blind review version
+│   ├── figures/                             # Vector publication figures (PDF & PNG)
+│   ├── references.bib                       # Verified BibTeX bibliography (37 citations)
+│   └── build_venues.sh                      # Zero-warning dual-venue compilation script
+├── models/                                  # FastKAN architecture definitions & checkpoints
+│   ├── yamls/                               # Architecture YAMLs (yolo11n-F16, F8, F4, C0)
+│   ├── modules/                             # FastKAN bottlenecks (Fixed & Adaptive RBF splines)
+│   └── checkpoints/                         # Official pretrained & cycle-4 weights (.pt)
+│       ├── ae_primate_yolo11n_f16_final.pt  # Final Cycle-4 model checkpoint (4.9 MB)
+│       └── yolo11n.pt                       # Standard COCO initialization weights (5.4 MB)
+├── primate_al/                              # Core Active Learning Library
+│   ├── methods/                             # Samplers: Random, Uncertainty, CoreSet, Proposed Cost-Aware
+│   ├── pool.py                              # Active learning candidate & labeled pool manager
+│   ├── metadata.py                          # Camera-trap burst event & station metadata manager
+│   ├── feature_extractor.py                 # FastKAN ROI feature representation extractor
+│   ├── uncertainty.py                       # Multi-head detection predictive entropy scorer
+│   └── trainer.py                           # YOLO training & evaluation harness
+├── configs/                                 # Active learning & detector configs
+│   ├── active_learning/
+│   │   ├── protocol_v2_reproduce.yaml       # Portable relative path configuration
+│   │   └── protocol_v2.yaml                 # Multi-GPU cluster training configuration
+├── experiments/                             # Complete verified empirical records
+│   ├── results_v2/                          # All 20 trajectories across 5 seeds (42, 101, 202, 303, 404)
+│   │   ├── protocol_v2_summary.json         # Aggregate multi-seed benchmark metrics
+│   │   └── protocol_v2_box_counts.json      # Bounding box economy records
+│   └── sealed_test_eval_v2/                 # Sealed held-out test evaluations (3,206 frames)
+├── scripts/                                 # Active learning dispatch & execution scripts
+│   ├── run_active_learning_cycle.py         # Main active learning execution script
+│   ├── compute_multiseed_statistics.py      # Multi-seed AUBC & box variance calculator
+│   └── launch_protocol_v2_all_gpus.sh       # 4-GPU parallel execution dispatcher
+├── tools/                                   # Analysis, evaluation & figure generation
+│   ├── evaluate_sealed_test.py              # Zero-leakage held-out test evaluator
+│   ├── compile_clean_benchmark.py           # Benchmark tables generator
+│   └── generate_publication_figures_v2.py   # Regenerate publication vector figures
+├── tests/                                   # Comprehensive unit & integration tests
+│   ├── test_active_learning.py              # Tests for AL pool, burst grouping, samplers
+│   └── test_adaptive_fastkan.py             # Tests for FastKAN modules & architecture YAMLs
+├── supplementary/                           # Model cards, hyperparameters & checksums
+│   ├── model_card.md                        # Formal model card documentation
+│   ├── hyperparameters.json                 # Comprehensive hyperparameter configuration
+│   └── checksums.sha256                     # SHA-256 integrity hashes (39/39 verified)
+├── export_adaptive_fastkan.py               # FastKAN continuous-to-fixed compaction utility
+├── LICENSE                                  # MIT License
+└── README.md                                # Reproduction guide & documentation
 ```
 
 ---
@@ -68,21 +105,64 @@ paper/
 ## 🚀 Quickstart & Reproduction
 
 ### 1. Environment Setup
+
 ```bash
 git clone https://github.com/mobashirsifat123/AE_Primate_Detection.git
 cd AE_Primate_Detection
-uv sync
+
+# Install dependencies (PyTorch, Ultralytics, NumPy, Matplotlib)
+pip install torch torchvision torchaudio
+pip install -e YOLO-KAN/
+pip install scipy matplotlib pandas
 ```
 
-### 2. Run Test Suite
+### 2. Verify System & Run Unit Tests
+
+Execute the full 13-test test suite covering Active Learning samplers, candidate pools, burst redundancy penalties, and FastKAN architecture parsers:
+
 ```bash
-uv run pytest tests/
+python3 -m unittest discover -s tests
 ```
 
-### 3. Compile LaTeX Paper to PDF
+### 3. Verify SHA-256 Checksums
+
+Ensure all empirical logs, figure artifacts, and model checkpoints match the verified paper records:
+
+```bash
+shasum -c supplementary/checksums.sha256
+```
+
+### 4. Regenerate Manuscript Figures & Empirical Tables
+
+```bash
+# Regenerate Table 1, Table 2 and summary statistics
+python3 tools/compile_clean_benchmark.py
+
+# Regenerate Figures 1, 2, 3, and 4 (PDF & PNG)
+python3 tools/generate_publication_figures_v2.py
+```
+
+### 5. Run Active Learning Experiments
+
+To run a single active learning trajectory with the proposed cost-aware policy:
+
+```bash
+python3 scripts/run_active_learning_cycle.py \
+    --config configs/active_learning/protocol_v2_reproduce.yaml \
+    --strategy proposed \
+    --total-cycles 4 \
+    --initial-budget 300 \
+    --cycle-budget 150 \
+    --seed 42 \
+    --run-dir experiments/runs/reproduce_proposed_seed42
+```
+
+### 6. Compile the Camera-Ready Manuscript to PDF
+
 ```bash
 bash paper/build_venues.sh
 ```
+Outputs `paper/main.pdf` (camera-ready) and `paper/main_anonymous.pdf` (anonymous double-blind).
 
 ---
 
