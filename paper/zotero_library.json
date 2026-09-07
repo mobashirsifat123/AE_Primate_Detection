@@ -1,0 +1,404 @@
+[
+  {
+    "itemType": "report",
+    "title": "Camera-trapping for conservation: a guide to best practices",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "O. R. Wearn"
+      },
+      {
+        "creatorType": "author",
+        "name": "P. Glover-Kapfer"
+      }
+    ],
+    "date": "2019",
+    "extra": "Citation Key: wearn2019camera"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "Perspectives in machine learning for wildlife conservation",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "D. Tuia"
+      },
+      {
+        "creatorType": "author",
+        "name": "B. Kellenberger"
+      },
+      {
+        "creatorType": "author",
+        "name": "S. Beery"
+      },
+      {
+        "creatorType": "author",
+        "name": "B. R. Costelloe"
+      },
+      {
+        "creatorType": "author",
+        "name": "S. Zuffi"
+      },
+      {
+        "creatorType": "author",
+        "name": "G. Rivas-Torres"
+      }
+    ],
+    "date": "2022",
+    "extra": "Citation Key: tuia2022perspectives",
+    "DOI": "10.1038/s41467-022-27980-y",
+    "publicationTitle": "Nature Communications"
+  },
+  {
+    "itemType": "conferencePaper",
+    "title": "Recognition in Terra Incognita",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "S. Beery"
+      },
+      {
+        "creatorType": "author",
+        "name": "G. Van Horn"
+      },
+      {
+        "creatorType": "author",
+        "name": "P. Perona"
+      }
+    ],
+    "date": "2018",
+    "extra": "Citation Key: beery2018recognition",
+    "DOI": "10.48550/arXiv.1807.04975",
+    "proceedingsTitle": "European Conference on Computer Vision (ECCV)"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "The iWildCam 2020 Competition Dataset",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "S. Beery"
+      },
+      {
+        "creatorType": "author",
+        "name": "E. Cole"
+      },
+      {
+        "creatorType": "author",
+        "name": "A. Gjoka"
+      }
+    ],
+    "date": "2020",
+    "extra": "Citation Key: beery2020iwildcam",
+    "DOI": "10.48550/arXiv.2004.10340",
+    "publicationTitle": "arXiv preprint arXiv:2004.10340"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "Efficient Pipeline for Camera Trap Image Review",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "S. Beery"
+      },
+      {
+        "creatorType": "author",
+        "name": "D. Morris"
+      },
+      {
+        "creatorType": "author",
+        "name": "S. Yang"
+      }
+    ],
+    "date": "2019",
+    "extra": "Citation Key: beery2019efficient",
+    "DOI": "10.48550/arXiv.1907.06772",
+    "publicationTitle": "arXiv preprint arXiv:1907.06772"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "Automatically identifying, counting, and describing wild animals in camera-trap images with deep learning",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "M. S. Norouzzadeh"
+      },
+      {
+        "creatorType": "author",
+        "name": "A. Nguyen"
+      },
+      {
+        "creatorType": "author",
+        "name": "M. Kosmala"
+      },
+      {
+        "creatorType": "author",
+        "name": "A. Swanson"
+      },
+      {
+        "creatorType": "author",
+        "name": "M. S. Palmer"
+      },
+      {
+        "creatorType": "author",
+        "name": "C. Packer"
+      },
+      {
+        "creatorType": "author",
+        "name": "J. Clune"
+      }
+    ],
+    "date": "2018",
+    "extra": "Citation Key: norouzzadeh2018automatically",
+    "DOI": "10.1073/pnas.1719367115",
+    "publicationTitle": "Proceedings of the National Academy of Sciences (PNAS)"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "A deep active learning system for species identification and counting in camera trap images",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "M. S. Norouzzadeh"
+      },
+      {
+        "creatorType": "author",
+        "name": "D. Morris"
+      },
+      {
+        "creatorType": "author",
+        "name": "S. Beery"
+      },
+      {
+        "creatorType": "author",
+        "name": "N. Joshi"
+      },
+      {
+        "creatorType": "author",
+        "name": "N. Salbi"
+      },
+      {
+        "creatorType": "author",
+        "name": "C. Packer"
+      }
+    ],
+    "date": "2021",
+    "extra": "Citation Key: norouzzadeh2021deep",
+    "DOI": "10.1111/2041-210x.13504",
+    "publicationTitle": "Methods in Ecology and Evolution"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "KAN: Kolmogorov-Arnold Networks",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "Z. Liu"
+      },
+      {
+        "creatorType": "author",
+        "name": "Y. Wang"
+      },
+      {
+        "creatorType": "author",
+        "name": "R. Vaidya"
+      },
+      {
+        "creatorType": "author",
+        "name": "F. Ruehle"
+      },
+      {
+        "creatorType": "author",
+        "name": "J. Halverson"
+      },
+      {
+        "creatorType": "author",
+        "name": "M. Soljacic"
+      },
+      {
+        "creatorType": "author",
+        "name": "T. Y. Hou"
+      },
+      {
+        "creatorType": "author",
+        "name": "M. Tegmark"
+      }
+    ],
+    "date": "2024",
+    "extra": "Citation Key: liu2024kan",
+    "DOI": "10.48550/arXiv.2404.19756",
+    "publicationTitle": "arXiv preprint arXiv:2404.19756"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "Kolmogorov-Arnold networks are radial basis function networks",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "Z. Li"
+      }
+    ],
+    "date": "2024",
+    "extra": "Citation Key: li2024fastkan",
+    "DOI": "10.48550/arXiv.2405.06721",
+    "publicationTitle": "arXiv preprint arXiv:2405.06721"
+  },
+  {
+    "itemType": "report",
+    "title": "Active learning literature survey",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "B. Settles"
+      }
+    ],
+    "date": "2009",
+    "extra": "Citation Key: settles2009active"
+  },
+  {
+    "itemType": "journalArticle",
+    "title": "A Comparative Survey of Deep Active Learning",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "P. Ren"
+      },
+      {
+        "creatorType": "author",
+        "name": "Y. Xiao"
+      },
+      {
+        "creatorType": "author",
+        "name": "X. Chang"
+      },
+      {
+        "creatorType": "author",
+        "name": "P.-Y. Huang"
+      },
+      {
+        "creatorType": "author",
+        "name": "Z. Li"
+      },
+      {
+        "creatorType": "author",
+        "name": "B. B. Gupta"
+      },
+      {
+        "creatorType": "author",
+        "name": "X. Chen"
+      },
+      {
+        "creatorType": "author",
+        "name": "X. Wang"
+      }
+    ],
+    "date": "2021",
+    "extra": "Citation Key: ren2021survey",
+    "DOI": "10.1145/3472291",
+    "publicationTitle": "ACM Computing Surveys"
+  },
+  {
+    "itemType": "conferencePaper",
+    "title": "Localization-Aware Active Learning for Object Detection",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "P.-Y. Kao"
+      },
+      {
+        "creatorType": "author",
+        "name": "B. Hariharan"
+      },
+      {
+        "creatorType": "author",
+        "name": "K. Q. Weinberger"
+      }
+    ],
+    "date": "2018",
+    "extra": "Citation Key: kao2018localization",
+    "DOI": "10.48550/arXiv.1801.05124",
+    "proceedingsTitle": "BMVC"
+  },
+  {
+    "itemType": "conferencePaper",
+    "title": "Active Learning for Deep Object Detection via Probabilistic Modeling",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "J. Choi"
+      },
+      {
+        "creatorType": "author",
+        "name": "I. Elezi"
+      },
+      {
+        "creatorType": "author",
+        "name": "H.-J. Lee"
+      },
+      {
+        "creatorType": "author",
+        "name": "C. Farabet"
+      },
+      {
+        "creatorType": "author",
+        "name": "J. M. Alvarez"
+      }
+    ],
+    "date": "2021",
+    "extra": "Citation Key: choi2021active",
+    "DOI": "10.1109/ICCV48922.2021.01010",
+    "proceedingsTitle": "IEEE/CVF International Conference on Computer Vision (ICCV)"
+  },
+  {
+    "itemType": "conferencePaper",
+    "title": "Active Learning for Convolutional Neural Networks: A Core-Set Approach",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "O. Sener"
+      },
+      {
+        "creatorType": "author",
+        "name": "S. Savarese"
+      }
+    ],
+    "date": "2018",
+    "extra": "Citation Key: sener2018active",
+    "DOI": "10.48550/arXiv.1708.00489",
+    "proceedingsTitle": "International Conference on Learning Representations (ICLR)"
+  },
+  {
+    "itemType": "conferencePaper",
+    "title": "Learning Sparse Neural Networks through L0 Regularization",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "C. Louizos"
+      },
+      {
+        "creatorType": "author",
+        "name": "M. Welling"
+      },
+      {
+        "creatorType": "author",
+        "name": "D. P. Kingma"
+      }
+    ],
+    "date": "2018",
+    "extra": "Citation Key: louizos2018learning",
+    "DOI": "10.48550/arXiv.1712.01312",
+    "proceedingsTitle": "International Conference on Learning Representations (ICLR)"
+  },
+  {
+    "itemType": "report",
+    "title": "YOLOv11: State-of-the-Art Real-Time Object Detection",
+    "creators": [
+      {
+        "creatorType": "author",
+        "name": "Ultralytics"
+      }
+    ],
+    "date": "2024",
+    "extra": "Citation Key: ultralytics2024"
+  }
+]

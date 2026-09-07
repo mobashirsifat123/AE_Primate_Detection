@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{\textbf{Active-Learning Benchmark on Nkhotakota Wildlife Reserve (Protocol v2.0).} Every cycle is retrained cumulatively from pure COCO-80 pretrained weights with zero pre-exposure to wildlife frames. Values report empirical mean $\pm$ standard error across $N=5$ independent experimental seeds. AUBC represents normalized area under the budget curve ($n \in [300, 900]$).}
+\label{tab:al_benchmark_v2}
+\vspace{-2mm}
+\begin{tabular}{l ccccc c}
+\toprule
+\textbf{Acquisition Strategy} & \textbf{Init ($n=300$)} & \textbf{Cycle 1 ($n=450$)} & \textbf{Cycle 2 ($n=600$)} & \textbf{Cycle 3 ($n=750$)} & \textbf{Cycle 4 ($n=900$)} & \textbf{AUBC} \\
+\midrule
+Random Uniform & 0.325 $\pm$ 0.004 & 0.401 $\pm$ 0.006 & 0.421 $\pm$ 0.004 & 0.442 $\pm$ 0.004 & 0.468 $\pm$ 0.005 & 0.4151 $\pm$ 0.0022 \\
+Entropy / Disagreement & 0.312 $\pm$ 0.014 & 0.398 $\pm$ 0.010 & 0.424 $\pm$ 0.006 & 0.446 $\pm$ 0.007 & 0.462 $\pm$ 0.005 & 0.4136 $\pm$ 0.0035 \\
+KAN Core-Set Diversity & 0.338 $\pm$ 0.005 & 0.395 $\pm$ 0.011 & 0.436 $\pm$ 0.004 & 0.455 $\pm$ 0.004 & 0.470 $\pm$ 0.002 & 0.4226 $\pm$ 0.0037$^*$ \\
+\textbf{AE-Primate (Ours)} & 0.315 $\pm$ 0.010 & 0.383 $\pm$ 0.004 & 0.431 $\pm$ 0.007 & 0.448 $\pm$ 0.005 & 0.462 $\pm$ 0.002 & \textbf{0.4127 $\pm$ 0.0025} \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize $^*$Statistically significant difference vs.\ proposed ($p < 0.05$, paired two-tailed Student's $t$-test across identical seeds).}
+\end{tabular}
+\end{table*}

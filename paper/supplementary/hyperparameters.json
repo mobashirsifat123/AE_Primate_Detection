@@ -1,0 +1,109 @@
+{
+  "protocol_version": "2.0",
+  "seed_pool": [42, 101, 202, 303, 404],
+  "dataset": {
+    "name": "Nkhotakota Primate Dataset",
+    "location": "Nkhotakota Wildlife Reserve, Malawi",
+    "total_frames": 40743,
+    "total_camera_stations": 49,
+    "target_classes": ["yellow_baboon", "vervet_monkey"],
+    "split_strategy": "location_disjoint",
+    "splits": {
+      "train": {
+        "num_stations": 35,
+        "num_frames": 31977
+      },
+      "val": {
+        "num_stations": 7,
+        "num_frames": 5560,
+        "stations": ["J21", "O14", "K15", "N16", "L17", "H22", "G25"]
+      },
+      "sealed_test": {
+        "num_stations": 7,
+        "num_frames": 3206,
+        "stations": ["M13", "P15", "H9", "O12", "F24", "Q11", "K18"]
+      }
+    }
+  },
+  "detector": {
+    "architecture": "YOLO11n-F16",
+    "base_model": "yolo11n.pt",
+    "total_parameters": 2450112,
+    "gflops": 6.3,
+    "input_resolution": [640, 640],
+    "spline_bottleneck": {
+      "type": "C3k2_FixedFastKAN",
+      "feature_scale": "P5",
+      "basis_type": "Gaussian_RBF",
+      "grid_size_K": 16,
+      "grid_range": [-1.0, 1.0],
+      "trainable_coefficients": true,
+      "trainable_grid_centres": false,
+      "residual_base": "SiLU"
+    }
+  },
+  "training": {
+    "optimizer": "SGD",
+    "momentum": 0.937,
+    "weight_decay": 0.0005,
+    "base_learning_rate": 0.01,
+    "final_learning_rate_ratio": 0.01,
+    "lr_scheduler": "cosine_annealing",
+    "warmup_epochs": 3.0,
+    "epochs_per_cycle": 20,
+    "batch_size": 16,
+    "workers": 8,
+    "amp": true,
+    "loss_gains": {
+      "box": 7.5,
+      "cls": 0.5,
+      "dfl": 1.5,
+      "label_smoothing": 0.0
+    },
+    "augmentation": {
+      "mosaic_prob": 1.0,
+      "close_mosaic_epochs": 10,
+      "horizontal_flip": 0.5,
+      "hsv_h": 0.015,
+      "hsv_s": 0.7,
+      "hsv_v": 0.4,
+      "degrees_rotation": 0.0
+    }
+  },
+  "active_learning": {
+    "num_cycles": 5,
+    "budget_schedule": [300, 450, 600, 750, 900],
+    "initial_seed_budget": 300,
+    "step_budget_delta": 150,
+    "weight_transfer_across_cycles": false,
+    "decontamination_checkpoint": "yolo11n.pt (COCO-80 pretrained, zero wildlife pre-exposure)",
+    "policy_formula": "V_i = (U(x_i)^beta_1 * D(x_i)^beta_2 * M_meta(x_i)^beta_3) / C_annot(x_i)",
+    "policy_weights": {
+      "beta_1_uncertainty": 1.0,
+      "beta_2_diversity": 0.5,
+      "beta_3_metadata": 0.3
+    },
+    "uncertainty_estimation": {
+      "method": "MC_Dropout",
+      "stochastic_passes": 5,
+      "dropout_rate": 0.1,
+      "components": ["classification_entropy", "iou_localization_variance"],
+      "lambda_loc": 1.0
+    },
+    "diversity_estimation": {
+      "feature_source": "FastKAN_P5_Bottleneck",
+      "distance_metric": "cosine_distance",
+      "selection_algorithm": "core_set_k_center_greedy"
+    },
+    "cost_penalty": {
+      "denominator": "predicted_bounding_box_count",
+      "epsilon_floor": 1.0
+    }
+  },
+  "evaluation": {
+    "confidence_threshold": 0.25,
+    "nms_iou_threshold": 0.45,
+    "primary_metric": "mAP50_95",
+    "secondary_metrics": ["mAP50", "precision", "recall", "AUBC50_95", "cumulative_boxes"]
+  }
+}

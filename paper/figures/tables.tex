@@ -1,0 +1,55 @@
+% Auto-generated tables -- PrimateScope Protocol v2.0 (5 Seeds, Decontaminated)
+
+\begin{table}[t]
+\centering
+\caption{Protocol v2.0 Active Learning Multi-Cycle Benchmark on Location-Disjoint Validation Split ($N=5$ Seeds: 42, 101, 202, 303, 404).}
+\label{tab:al_results}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+Strategy & Cycle 0 ($n=300$) & Cycle 1 ($n=450$) & Cycle 2 ($n=600$) & Cycle 3 ($n=750$) & Cycle 4 ($n=900$) & AUBC ($m\text{AP}_{50\text{-}95}$) \\
+\midrule
+Uniform Random & 0.3247 $\pm$ 0.0079 & 0.4006 $\pm$ 0.0144 & 0.4214 $\pm$ 0.0098 & 0.4420 $\pm$ 0.0082 & 0.4681 $\pm$ 0.0107 & 0.4151 $\pm$ 0.0068 \\
+Uncertainty (Entropy) & 0.3259 $\pm$ 0.0075 & 0.4002 $\pm$ 0.0092 & 0.4253 $\pm$ 0.0135 & 0.4439 $\pm$ 0.0130 & 0.4665 $\pm$ 0.0089 & 0.4136 $\pm$ 0.0084 \\
+Diversity (CoreSet) & 0.3394 $\pm$ 0.0097 & 0.4093 $\pm$ 0.0097 & 0.4357 $\pm$ 0.0049 & 0.4497 $\pm$ 0.0082 & 0.4748 $\pm$ 0.0062 & 0.4226 $\pm$ 0.0050 \\
+\textbf{PrimateScope (Proposed)} & \textbf{0.3364 $\pm$ 0.0084} & \textbf{0.3957 $\pm$ 0.0088} & \textbf{0.4229 $\pm$ 0.0041} & \textbf{0.4466 $\pm$ 0.0041} & \textbf{0.4618 $\pm$ 0.0019} & \textbf{0.4127 $\pm$ 0.0057} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{AUBC Significance, Cumulative Bounding Box Queries, and Annotation Savings ($N=5$ Seeds).}
+\label{tab:aubc_savings}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Strategy & AUBC ($m\text{AP}_{50\text{-}95}$) & Paired $t$-stat ($p$-val) & Wilcoxon $p$-val & Cumulative Boxes & Box Savings vs. Random \\
+\midrule
+Uniform Random & 0.4151 $\pm$ 0.0068 & Baseline & Baseline & 1091.6 $\pm$ 26.5 & Baseline \\
+Uncertainty (Entropy) & 0.4136 $\pm$ 0.0084 & $t(4) = -0.420$ ($p = 0.696$) & $p = 0.625$ & 1059.2 $\pm$ 22.8 & $-32.4$ boxes ($-2.97\%$) \\
+Diversity (CoreSet) & 0.4226 $\pm$ 0.0050 & $t(4) = -4.507$ ($p = 0.011$) & $p = 0.063$ & 1080.2 $\pm$ 26.9 & $-11.4$ boxes ($-1.04\%$) \\
+\textbf{PrimateScope (Proposed)} & \textbf{0.4127 $\pm$ 0.0057} & \textbf{$t(4) = -0.717$ ($p = 0.513$)} & \textbf{$p = 0.813$} & \textbf{1028.2 $\pm$ 7.9} & \textbf{$-63.4$ boxes ($-5.81\%$, $p=0.008$)} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Sealed Held-Out Test Generalization across 7 Unseen Stations (3,206 Frames, $N=5$ Seeds).}
+\label{tab:sealed_test_results}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Strategy & Test $m\text{AP}_{50\text{-}95}$ & Test $m\text{AP}_{50}$ & Precision & Recall & Generalization Std ($\sigma$) \\
+\midrule
+Uniform Random & 0.4251 $\pm$ 0.0058 & 0.6867 $\pm$ 0.0076 & 0.7809 & 0.6206 & 0.0058 \\
+Uncertainty (Entropy) & 0.4155 $\pm$ 0.0084 & 0.6799 $\pm$ 0.0104 & 0.7583 & 0.6264 & 0.0084 \\
+Diversity (CoreSet) & 0.4300 $\pm$ 0.0045 & 0.7046 $\pm$ 0.0063 & 0.8032 & 0.6359 & 0.0045 \\
+\textbf{PrimateScope (Proposed)} & \textbf{0.4119 $\pm$ 0.0031} & \textbf{0.6729 $\pm$ 0.0039} & \textbf{0.7478} & \textbf{0.6261} & \textbf{0.0031} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

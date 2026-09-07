@@ -1,0 +1,71 @@
+[
+  {
+    "cycle": 0,
+    "strategy": "initial_seed",
+    "labeled_count": 300,
+    "unlabeled_count": 30320,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/uncertainty_seed404/cycle_0/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.2792432017637059,
+      "mAP50": 0.4839541331069308,
+      "precision": 0.533497364356794,
+      "recall": 0.5023987342077748
+    }
+  },
+  {
+    "cycle": 1,
+    "strategy": "uncertainty",
+    "labeled_count": 450,
+    "unlabeled_count": 30170,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/uncertainty_seed404/cycle_1/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.41133424566500887,
+      "mAP50": 0.7020838818542138,
+      "precision": 0.7919400022375983,
+      "recall": 0.6315407253545262
+    }
+  },
+  {
+    "cycle": 2,
+    "strategy": "uncertainty",
+    "labeled_count": 600,
+    "unlabeled_count": 30020,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/uncertainty_seed404/cycle_2/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.4349931106261559,
+      "mAP50": 0.740385884554301,
+      "precision": 0.8068244599788306,
+      "recall": 0.6672105853717516
+    }
+  },
+  {
+    "cycle": 3,
+    "strategy": "uncertainty",
+    "labeled_count": 750,
+    "unlabeled_count": 29870,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/uncertainty_seed404/cycle_3/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.42857691150075183,
+      "mAP50": 0.7224316113632394,
+      "precision": 0.8090797403967342,
+      "recall": 0.6446796985771661
+    }
+  },
+  {
+    "cycle": 4,
+    "strategy": "uncertainty",
+    "labeled_count": 900,
+    "unlabeled_count": 29720,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/uncertainty_seed404/cycle_4/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.4698859456714673,
+      "mAP50": 0.7763436238962429,
+      "precision": 0.809439336413468,
+      "recall": 0.6970312375440579
+    }
+  }
+]

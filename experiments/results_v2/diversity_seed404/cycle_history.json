@@ -1,0 +1,71 @@
+[
+  {
+    "cycle": 0,
+    "strategy": "initial_seed",
+    "labeled_count": 300,
+    "unlabeled_count": 30320,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/diversity_seed404/cycle_0/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.33999684307214517,
+      "mAP50": 0.6116680983407854,
+      "precision": 0.7006437799529686,
+      "recall": 0.5465779434896729
+    }
+  },
+  {
+    "cycle": 1,
+    "strategy": "diversity",
+    "labeled_count": 450,
+    "unlabeled_count": 30170,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/diversity_seed404/cycle_1/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.4113236294959736,
+      "mAP50": 0.6976320779988561,
+      "precision": 0.7724728051353863,
+      "recall": 0.63397931386057
+    }
+  },
+  {
+    "cycle": 2,
+    "strategy": "diversity",
+    "labeled_count": 600,
+    "unlabeled_count": 30020,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/diversity_seed404/cycle_2/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.4262994034094376,
+      "mAP50": 0.7190705810201512,
+      "precision": 0.7787629524312468,
+      "recall": 0.6470654749100562
+    }
+  },
+  {
+    "cycle": 3,
+    "strategy": "diversity",
+    "labeled_count": 750,
+    "unlabeled_count": 29870,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/diversity_seed404/cycle_3/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.45396686570165573,
+      "mAP50": 0.7511183242128732,
+      "precision": 0.8017582172583941,
+      "recall": 0.6800722369499665
+    }
+  },
+  {
+    "cycle": 4,
+    "strategy": "diversity",
+    "labeled_count": 900,
+    "unlabeled_count": 29720,
+    "selected_batch_size": 150,
+    "best_checkpoint": "/mnt/nas/users/moba/projects/AE_Primate_Detection/worktrees/primate-al-pilot/experiments/runs/primate_al_v2/diversity_seed404/cycle_4/train_f16/weights/best.pt",
+    "metrics": {
+      "mAP50_95": 0.46710478700302954,
+      "mAP50": 0.7739682376505062,
+      "precision": 0.8281112012527643,
+      "recall": 0.6850810714615467
+    }
+  }
+]
