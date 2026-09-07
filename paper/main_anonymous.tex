@@ -372,17 +372,19 @@ In field environments where expert annotators require 12--18\,s per bounding box
 We introduced \textbf{AE-Primate}, an end-to-end framework combining the ultra-lightweight YOLO11n-F16 detector with a cost-aware active learning policy. Evaluated on 40,743 camera-trap frames from Nkhotakota Wildlife Reserve under a strict location-disjoint protocol, YOLO11n-F16 establishes superior generalization (+1.49\% mAP over CNN baselines) at sub-3\,M parameter scale. Our multi-seed active learning study deconstructs the failure modes of predictive uncertainty under spatial covariate shift, reveals KAN Core-Set Diversity as the premier policy for out-of-distribution transfer ($0.4300$ test mAP), and demonstrates that crowding-penalized acquisition saves \textbf{59.8 cumulative bounding boxes ($-5.48\%$, $p=0.011$)} while suppressing budgeting standard deviation by \textbf{60.7\%} (84.6\% variance reduction). AE-Primate provides an open, reproducible blueprint for sustainable wildlife monitoring in resource-limited protected areas.
 
 \ifanonymous
-\section*{Reproducibility Statement}
+\paragraph{Reproducibility}
 Code, manifests, and checkpoints are available anonymously at: \url{https://anonymous.4open.science/r/AE_Primate_Detection-anon}.
 \else
-\section*{Reproducibility Statement}
+\paragraph{Reproducibility}
 All code, models, and manifests are available at: \url{https://github.com/mobashirsifat123/AE_Primate_Detection}.
 \fi
 
 %% ─────────────────────────────────────────────────────────────────────────────
 \bibliographystyle{IEEEtran}
-\begin{thebibliography}{48}
+\begin{thebibliography}{50}
 \sloppy
+\setlength{\itemsep}{0.5pt plus 0.2pt}
+\setlength{\parskip}{0pt}
 
 \bibitem{wearn2019camera}
 O.~R. Wearn and P.~Glover-Kapfer, ``Camera-trapping for conservation: a guide to best practices,'' \emph{WWF Conservation Technology Series}, vol.~1, no.~1, pp. 1--181, 2019.
@@ -528,6 +530,12 @@ C.-Y. Wang, A.~Bochkovskiy, and H.-Y.~M. Liao, ``YOLOv7: Trainable bag-of-freebi
 \bibitem{howard2019searching}
 A.~Howard \emph{et~al.}, ``Searching for MobileNetV3,'' in \emph{Proc. ICCV}, 2019, pp. 1314--1324.
 
+\bibitem{iyer2013submodular}
+R.~Iyer and J.~Bilmes, ``Submodular optimization with submodular cover and knapsack constraints,'' in \emph{Proc. NeurIPS}, 2013, pp. 2436--2444.
+
+\bibitem{rahaman2019spectral}
+N.~Rahaman \emph{et~al.}, ``On the spectral bias of neural networks,'' in \emph{Proc. ICML}, 2019, pp. 5301--5310.
+
 \end{thebibliography}
 
 %% ─────────────────────────────────────────────────────────────────────────────
@@ -535,26 +543,33 @@ A.~Howard \emph{et~al.}, ``Searching for MobileNetV3,'' in \emph{Proc. ICCV}, 20
 
 \section{FastKAN Mathematical Formulation and Spline Geometry}
 \label{app:kan_proof}
+\begingroup
+\setlength{\abovedisplayskip}{4pt plus 1pt minus 1pt}
+\setlength{\belowdisplayskip}{4pt plus 1pt minus 1pt}
+\setlength{\abovedisplayshortskip}{2pt}
+\setlength{\belowdisplayshortskip}{2pt}
 
 \subsection{Gaussian Radial Basis Spline Expansion}
 In standard Kolmogorov-Arnold Networks~\cite{liu2024kan}, univariate edge functions are parameterized using piecewise B-spline bases:
 \begin{equation}
-  \psi(u) = \sum_{k=1}^K c_k B_k(u),
+\psi(u) = \sum_{k=1}^K c_k B_k(u),
+\label{eq:bspline}
 \end{equation}
-where $B_k(u)$ are evaluated recursively using the de Boor-Cox algorithm. On GPU tensor cores, this recursive evaluation causes warp branching and excessive memory traffic. FastKAN~\cite{li2024fastkan} reparameterizes the spline expansion using a dictionary of fixed Gaussian Radial Basis Functions (RBFs):
+where $B_k(u)$ are evaluated recursively via the de Boor-Cox algorithm. FastKAN~\cite{li2024fastkan} reparameterizes the spline expansion using a dictionary of fixed Gaussian Radial Basis Functions (RBFs):
 \begin{equation}
-  \phi_k(u) = \exp\!\left(-\frac{(u - \mu_k)^2}{2\sigma^2}\right), \quad k \in \{1, \dots, K\},
+\phi_k(u) = \exp\!\left(-\frac{(u - \mu_k)^2}{2\sigma^2}\right), \quad k \in \{1, \dots, K\},
+\label{eq:rbf_basis}
 \end{equation}
-where $\mu_k = -1 + 2(k - 1)/(K - 1)$ are fixed equispaced centres spanning the normalized input domain $[-1, 1]$, and $\sigma = 2/(K - 1)$ is the fixed kernel bandwidth.
-
+where $\mu_k = -1 + 2(k-1)/(K-1)$ are fixed equispaced centres spanning normalized input $[-1, 1]$, and $\sigma = 2/(K-1)$ is the kernel bandwidth.
 The total univariate transformation is formulated as:
 \begin{equation}
-  \psi_i(x_i) = w_{b, i} \operatorname{SiLU}(x_i) + \sum_{k=1}^K c_{i, k} \phi_k(x_i),
+\psi_i(x_i) = w_{b,i} \operatorname{SiLU}(x_i) + \sum_{k=1}^K c_{i,k} \phi_k(x_i),
+\label{eq:fastkan_layer}
 \end{equation}
-where $w_{b, i}$ weights the smooth residual base activation path, and $c_{i, k}$ are learnable spline mixture coefficients.
+where $w_{b,i}$ weights the smooth residual base activation path, and $c_{i,k}$ are learnable spline mixture coefficients.
 
 \subsection{Orthogonality and Representational Capacity}
-Unlike standard multi-layer perceptrons where neuron activations are coupled through dense matrix products, the FastKAN RBF basis functions are quasi-orthogonal across feature space:
+Unlike standard multi-layer perceptrons where neuron activations are coupled through dense matrix products, FastKAN RBF basis functions are quasi-orthogonal across feature space:
 \begin{equation}
 \begin{aligned}
   \langle \phi_j, \phi_k \rangle &= \int_{-1}^1 \exp\!\left(-\frac{(u - \mu_j)^2 + (u - \mu_k)^2}{2\sigma^2}\right) du \\
@@ -562,7 +577,8 @@ Unlike standard multi-layer perceptrons where neuron activations are coupled thr
 \end{aligned}
 \label{eq:inner_prod}
 \end{equation}
-For adjacent bases ($|j - k| = 1$), the overlap is $\exp(-1/4) \approx 0.7788$, while for distant bases ($|j - k| \ge 3$), the overlap decays rapidly to $\le \exp(-9/4) \approx 0.1054$. This localized compact support allows FastKAN layers to approximate high-frequency non-linear surface variations (such as camouflaged fur patterns against dense leaves) without inducing global catastrophic interference across unactivated feature regions.
+For adjacent bases ($|j - k| = 1$), overlap is $\exp(-1/4) \approx 0.7788$, while for distant bases ($|j - k| \ge 3$), overlap decays to $\le \exp(-9/4) \approx 0.1054$. This localized compact support allows FastKAN to approximate sharp non-linear boundaries without inducing activation interference across unactivated coordinates.
+\endgroup
 
 \section{Full Training and Architectural Specifications}
 \label{app:hyperparams}
@@ -572,7 +588,7 @@ All models were trained using stochastic gradient descent (SGD) with Nesterov mo
 
 \begin{table}[h]
 \centering
-\renewcommand{\arraystretch}{0.92}
+\renewcommand{\arraystretch}{0.90}
 \caption{Hyperparameter Specification for Active Detector Training.}
 \label{tab:hyperparams}
 \resizebox{\columnwidth}{!}{%
@@ -639,7 +655,7 @@ The Nkhotakota Wildlife Reserve encompasses diverse vegetation zones ranging fro
 
 \begin{table}[h]
 \centering
-\renewcommand{\arraystretch}{0.92}
+\renewcommand{\arraystretch}{0.90}
 \caption{Environmental Characteristics of Held-Out Camera Stations in Nkhotakota Reserve.}
 \label{tab:stations}
 \resizebox{\columnwidth}{!}{%
@@ -670,7 +686,7 @@ K18 & Test & Broken Miombo Scrub   & Moderate (50\%) & Cryptic postures \\
 \section{Broader Impact, Ethics, and Edge Energy Footprint}
 \label{app:impact}
 
-\balance
+%\balance
 
 \paragraph{Conservation Ethics and Wildlife Welfare}
 Camera-trap surveillance is non-invasive, minimizing disruption to sensitive primate populations (yellow baboon \emph{Papio cynocephalus} and vervet monkey \emph{Chlorocebus pygerythrus}). The Nkhotakota dataset complies with all reserve permits and wildlife research guidelines in Malawi. Incidental human captures are scrubbed prior to training to guarantee privacy.
@@ -679,7 +695,7 @@ Camera-trap surveillance is non-invasive, minimizing disruption to sensitive pri
 Runs were conducted on dedicated NVIDIA A40 GPUs (300\,W TDP). Total compute across architecture search, 20 active trajectories (5 cycles $\times$ 20 epochs), and sealed test evaluations was $\approx$242 GPU-hours. Based on regional grid carbon intensity ($\approx 0.38$\,kg CO$_2$e/kWh), emissions are estimated at 27.6\,kg CO$_2$e, fully offset via certified wildlife conservation credits. Checkpoints originate from base COCO-80 pretrained weights.
 
 \paragraph{Field Deployment and Hardware Latency}
-For deployment on solar camera nodes, YOLO11n-F16 operates well within edge compute envelopes. Exported to FP16 TensorRT on the NVIDIA Jetson Orin Nano (15\,W mode), the detector achieves 32.4\,FPS at $640 \times 640$ resolution with runtime memory below 450\,MB, permitting concurrent telemetry execution. Field nodes query annotations only when acquisition policies trigger high informativeness, conserving battery power while maximizing discovery.
+For deployment on solar camera nodes, YOLO11n-F16 operates well within edge compute envelopes. Exported to FP16 TensorRT on NVIDIA Jetson Orin Nano (15\,W mode), the detector achieves 32.4\,FPS at $640 \times 640$ with memory under 450\,MB, permitting concurrent telemetry execution. Field nodes query annotations only when acquisition policies trigger high informativeness, conserving battery power while maximizing discovery.
 
 \paragraph{Artifact Availability and Open Science}
 All experimental artifacts—configurations, manifests, active trajectories across 5 seeds, and checkpoints—are licensed under MIT and openly accessible at: \ifanonymous \url{https://anonymous.4open.science/r/AE_Primate_Detection-anon}\else \url{https://github.com/mobashirsifat123/AE_Primate_Detection}\fi.
