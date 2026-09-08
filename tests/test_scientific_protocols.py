@@ -3,10 +3,11 @@ Scientific Protocol & Integrity Test Suite for AE-Primate
 (Annotation-Efficient Primate Detection).
 
 Certifies:
-1. Strict location-disjoint geographic partitioning (0 camera overlap between train, val, and test splits).
-2. Detector model topology, parameter count, and FLOP invariants (YOLO11n-F16 at 2.45M params).
-3. Active learning cost model (Eq. 12) & submodular greedy marginal ratio (Eq. 8).
-4. Multi-seed empirical statistics (N=5 independent seeds) matching Table II and protocol_v2_summary.json.
+1. Strict location-disjoint geographic partitioning (verified against authentic Nkhotakota camera station splits).
+2. Detector model topology and parameter invariants (YOLO11n-F16 at 2.48M params vs YOLO11n at 2.62M params).
+3. Active learning crowding cost model (Eq. 12) & greedy marginal utility ratio.
+4. Exact 5-seed empirical active learning statistics (N=5 independent seeds) matching raw artifact data.
+5. Statistical significance audits: Diversity vs Random test mAP (p = 0.247, not significant) and Cost-Aware box savings (p = 0.0105, significant).
 """
 
 import math
@@ -20,18 +21,18 @@ import pytest
 
 def test_zero_geographic_leakage_station_partition():
     """
-    Verify that all 49 camera stations in the Nkhotakota dataset are strictly
+    Verify that all 49 authentic camera stations in the Nkhotakota dataset are strictly
     partitioned across train, val, and test splits with zero geographic overlap.
     """
     train_stations = {
-        "A01", "A02", "A03", "A04", "A05", "B01", "B02", "B03", "B04", "B05",
-        "C01", "C02", "C03", "C04", "C05", "D01", "D02", "D03", "D04", "D05",
-        "E01", "E02", "E03", "E04", "E05", "F01", "F02", "F03", "F04", "F05",
-        "H01", "H02", "H03", "H04", "H05"
+        "B10", "B12", "E11", "H12", "H21", "H24", "I10", "J13", "K19", "K26",
+        "L17", "L24", "M13", "M26", "N19", "O06", "O21", "O24", "P23", "Q05",
+        "Q07", "Q10", "Q12", "Q15", "Q17", "Q21", "R09", "R14", "R19", "R23",
+        "R25", "S11", "T22", "T24", "T26"
     }
     
-    val_stations = {"J21", "O14", "K15", "N16", "L17", "H22", "G25"}
-    test_stations = {"M13", "P15", "H9", "O12", "F24", "Q11", "K18"}
+    val_stations = {"E13", "I14", "K15", "L21", "N16", "P20", "P26"}
+    test_stations = {"G25", "J21", "M22", "O03", "O12", "O14", "R27"}
     
     total_stations = train_stations | val_stations | test_stations
     
@@ -53,7 +54,7 @@ def test_zero_geographic_leakage_station_partition():
 def test_model_topology_parameter_invariants():
     """
     Verify parameter and latency ordering across model candidates from Table I.
-    Fixed-basis FastKAN (F16) achieves parameter savings (2.45M) over standard CNN (2.62M)
+    Fixed-basis FastKAN (F16) achieves parameter savings (2.48M) over standard CNN (2.62M)
     while achieving highest test mAP (0.5626).
     """
     models = {
@@ -63,7 +64,7 @@ def test_model_topology_parameter_invariants():
         "YOLO11n_C0": {"params_m": 2.52, "latency_ms": 5.48, "mAP": 0.5478},
         "YOLO11n_F4": {"params_m": 2.48, "latency_ms": 5.65, "mAP": 0.5508},
         "YOLO11n_F8": {"params_m": 2.48, "latency_ms": 5.60, "mAP": 0.5525},
-        "YOLO11n_F16": {"params_m": 2.45, "latency_ms": 10.99, "mAP": 0.5626},
+        "YOLO11n_F16": {"params_m": 2.48, "latency_ms": 10.99, "mAP": 0.5626},
     }
     
     f16 = models["YOLO11n_F16"]
@@ -71,7 +72,7 @@ def test_model_topology_parameter_invariants():
     c0 = models["YOLO11n_C0"]
     
     assert f16["params_m"] < b0["params_m"], "YOLO11n-F16 must have fewer parameters than standard YOLO11n baseline (2.62M)"
-    assert f16["params_m"] < c0["params_m"], "YOLO11n-F16 must have fewer parameters than matched CNN control"
+    assert f16["params_m"] <= c0["params_m"], "YOLO11n-F16 must have fewer or equal parameters to matched CNN control"
     assert f16["mAP"] > b0["mAP"], "YOLO11n-F16 must achieve higher mAP than YOLO11n-B0 (+1.49%)"
     assert f16["mAP"] == 0.5626, "Exact test mAP for YOLO11n-F16 must match Table I"
     assert models["MDv6_C"]["mAP"] < 0.20, "MegaDetector zero-shot baseline should exhibit severe domain shift"
@@ -115,7 +116,7 @@ def test_cost_model_monotonicity():
 
 def test_marginal_utility_ratio_crowding_penalty():
     """
-    Verify that the submodular marginal utility ratio V(x_i | S) (Eq. 8)
+    Verify that the greedy marginal utility ratio V(x_i | S) (Eq. 8)
     prioritizes informative solitary frames over redundant dense troops.
     """
     # Candidate 1: High uncertainty (0.8), high diversity (0.9), site novelty (0.5), 1 box
@@ -136,7 +137,6 @@ def _student_t_2sided_p_val(t_stat: float, df: int) -> float:
     t_abs = abs(t_stat)
     def pdf(x):
         return (math.gamma((df + 1) / 2) / (math.sqrt(df * math.pi) * math.gamma(df / 2))) * (1 + x**2 / df)**(-(df + 1) / 2)
-    # Integrate tail from t_abs to infinity (up to 50)
     steps = 100000
     upper = 50.0
     dx = (upper - t_abs) / steps
@@ -147,12 +147,12 @@ def _student_t_2sided_p_val(t_stat: float, df: int) -> float:
 def test_five_seed_active_learning_statistics():
     """
     Verify the exact 5-seed statistics reported in Table II of the manuscript:
-    - Random Uniform: 1091.6 +/- 11.9 (SEM), std = 26.54
-    - Epistemic Uncertainty: 1072.4 +/- 10.0 (SEM), std = 22.37
-    - AE-Primate (Diversity): 1065.6 +/- 6.1 (SEM), std = 13.74
-    - AE-Primate (Cost-Aware): 1031.8 +/- 4.7 (SEM), std = 10.43
+    - Random Uniform: 1091.6 +/- 11.8 (SEM), std = 26.45
+    - Epistemic Uncertainty: 1072.4 +/- 9.9 (SEM), std = 22.15
+    - AE-Primate (Diversity): 1065.6 +/- 6.2 (SEM), std = 13.79
+    - AE-Primate (Cost-Aware): 1031.8 +/- 4.7 (SEM), std = 10.50
     - Paired diff: -59.8 boxes (-5.48%, p = 0.0105)
-    - Std dev reduction: 60.7% (84.6% variance reduction)
+    - Std dev reduction: 60.3% (84.2% variance reduction)
     """
     # Cumulative box counts across seeds [101, 202, 303, 404, 42]
     import json
@@ -212,14 +212,37 @@ def test_five_seed_active_learning_statistics():
     assert math.isclose(var_reduction, 84.2, abs_tol=0.5)
 
 
-def test_test_set_generalization_leadership():
+# ---------------------------------------------------------------------------
+# Protocol 5: Test-Set Generalization & Statistical Significance Audit
+# ---------------------------------------------------------------------------
+
+def test_test_set_generalization_and_significance():
     """
-    Verify test mAP generalization across 5 seeds from Table IV:
-    AE-Primate (Diversity) achieves 0.4300 +/- 0.0045, outperforming passive random (0.4251).
+    Verify test mAP generalization and statistical significance across 5 seeds:
+    - Random: 0.4251 +/- 0.0058 (SEM)
+    - Diversity: 0.4300 +/- 0.0045 (SEM)
+    - Diversity beats Random on 3 out of 5 seeds (3/5 wins).
+    - Paired t-test yields t = 1.3538, p = 0.2472 (NOT statistically significant).
     """
     test_random = np.array([0.4361, 0.4256, 0.4253, 0.4037, 0.4346], dtype=float)
     test_diversity = np.array([0.4349, 0.4398, 0.4326, 0.4136, 0.4290], dtype=float)
+    n = len(test_random)
     
+    # Check means
     assert math.isclose(float(np.mean(test_random)), 0.4251, abs_tol=0.001)
     assert math.isclose(float(np.mean(test_diversity)), 0.4300, abs_tol=0.001)
-    assert float(np.mean(test_diversity)) > float(np.mean(test_random))
+    
+    # Check seed wins
+    diff = test_diversity - test_random
+    wins = int(np.sum(diff > 0))
+    assert wins == 3, f"Diversity wins 3/5 seeds, got {wins}"
+    
+    # Check paired t-test
+    mean_diff = float(np.mean(diff))
+    std_diff = float(np.std(diff, ddof=1))
+    t_stat = mean_diff / (std_diff / math.sqrt(n))
+    assert math.isclose(t_stat, 1.354, abs_tol=0.01)
+    
+    p_val = _student_t_2sided_p_val(t_stat, df=n - 1)
+    assert math.isclose(p_val, 0.247, abs_tol=0.01)
+    assert p_val > 0.05, "Audit confirms: Diversity vs. Random test mAP difference is NOT statistically significant (p > 0.05)"

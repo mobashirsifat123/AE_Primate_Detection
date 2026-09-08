@@ -136,7 +136,7 @@ def generate_figure1(data, box_data):
 
         prop_final = float(np.mean([box_data['proposed'][s][4] for s in box_data['proposed']]))
         ax2.annotate(
-            'AE-Primate (Cost-Aware):\n$-59.8$ boxes ($-5.48\\%$)\n$p = 0.011$ (Paired $t$)\n$60.7\\%$ Std Dev Reduction',
+            'AE-Primate (Cost-Aware):\n$-59.8$ boxes ($-5.48\\%$)\n$p = 0.0105$ (Paired $t$)\n$60.3\\%$ Std Dev Reduction\n$\\approx 12\\text{--}18$ min labor saved',
             xy=(900, prop_final), xycoords='data',
             xytext=(600, 480), textcoords='data',
             arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=-0.2", color='#1B873F', lw=1.8),
@@ -167,7 +167,7 @@ def generate_figure2():
         ("C0", 2.52, 0.5478, 5.48,  "#c5b0d5", "^"),
         ("F4", 2.48, 0.5508, 5.65,  "#ffbb78", "v"),
         ("F8", 2.48, 0.5525, 5.60,  "#98df8a", "P"),
-        ("F16", 2.45, 0.5626, 10.99, "#2ca02c", "o"),
+        ("F16", 2.48, 0.5626, 10.99, "#2ca02c", "o"),
         ("MDv6", 25.53, 0.1255, 11.59, "#d62728", "X"),
     ]
 

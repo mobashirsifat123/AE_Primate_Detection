@@ -40,27 +40,24 @@
 ### Parameter & Computational Complexity
 | Specification | Standard YOLO11n (B0) | B-spline KAN (B1) | Adaptive AB-FastKAN | **YOLO11n-F16 (Ours)** | MegaDetector v6 |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Parameters** | 2.62\,M | 2.95\,M | 2.52\,M | **2.45\,M** (-6.5%) | 25.53\,M |
-| **GFLOPs (640x640)** | 6.3 | 7.1 | 6.4 | **6.3** | 74.2 |
+| **Parameters** | 2.62\,M | 2.95\,M | 2.52\,M | **2.48\,M** (2,483,792) | 25.53\,M |
+| **GFLOPs (640x640)** | 6.3 | 7.1 | 6.4 | **6.4** | 74.2 |
 | **Spline Type** | None (CNN) | Cubic B-spline | Hard-Concrete Gate | **Fixed Gaussian RBF** | None (CNN) |
 | **Grid Size ($K$)** | N/A | 5 knots | Dynamic | **16 RBF bases** | N/A |
 | **Grid Interval** | N/A | $[-1, 1]$ | $[-1, 1]$ | **$[-1, 1]$ (fixed)** | N/A |
 
 ---
 
-## 3. Hardware Latency & Edge Profiling
+## 3. Hardware Latency & Profiling
 
-Inference benchmarks were conducted under realistic field operating envelopes:
+Inference benchmarks were measured directly on server hardware (`profile_adaptive_fastkan.py`):
 
 | Hardware Platform | Operating Envelope | Precision | Mean Latency | Throughput | Peak VRAM |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **NVIDIA Jetson Orin Nano** | 15\,W Super Mode | FP16 TensorRT | **30.8\,ms** | **32.4\,FPS** | **442\,MB** |
-| **NVIDIA Jetson Orin Nano** | 7\,W Low Power | INT8 TensorRT | **18.4\,ms** | **54.3\,FPS** | **318\,MB** |
-| **NVIDIA A40** | 300\,W Server | FP16 TensorRT | **10.99\,ms** | **91.0\,FPS** | **1.12\,GB** |
-| **NVIDIA A40** | 300\,W Server | FP32 PyTorch | **14.22\,ms** | **70.3\,FPS** | **1.45\,GB** |
+| **NVIDIA A40** | 300\,W Server PCIe | FP16 TensorRT / Torch | **10.99\,ms** | **91.0\,FPS** | **480\,MB** |
+| **NVIDIA A40** | 300\,W Server PCIe | FP32 PyTorch | **14.22\,ms** | **70.3\,FPS** | **620\,MB** |
 
-- **Edge Feasibility**: The entire detector footprint easily fits into the 8\,GB unified memory of the Jetson Orin Nano, leaving over 7\,GB for real-time video caching and telemetry services.
-- **Energy Budget**: At 32.4\,FPS and 15\,W, per-frame energy consumption is $0.46$\,J, permitting 15,000+ inference events on a compact 20\,Wh solar buffer battery without recharge.
+- **Edge Throughput Readiness**: At 10.99\,ms per frame (91.0\,FPS) on an A40 GPU with sub-500\,MB memory consumption, YOLO11n-F16 is architecturally lightweight for edge inference pipelines. Physical testing on low-power edge nodes (such as NVIDIA Jetson Orin Nano) is identified as future work.
 
 ---
 
@@ -77,7 +74,9 @@ All evaluations are conducted on the **Nkhotakota Primate Dataset** under a zero
 
 ## 5. Active Learning Compatibility
 
-YOLO11n-F16 is designed specifically for integration with the **AE-Primate Cost-Aware Active Learning Policy**:
+YOLO11n-F16 is designed specifically for integration with the **AE-Primate Active Learning Framework**:
 - Fixed-basis spline representations provide stable gradient signals in low-data training regimes ($n \in [300, 900]$ images).
-- Extracted bottleneck feature representations enable high-dimensional core-set diversity sampling without additional embedding heads.
-- When trained from pure COCO-80 pretrained weights across 5 active cycles, YOLO11n-F16 matches passive random sampling accuracy while saving $63.4$ bounding boxes ($-5.81\%$, $p=0.008$) and cutting box-count variance by $70.2\%$.
+- Extracted bottleneck feature representations (256-D) enable high-dimensional core-set diversity sampling without additional embedding heads.
+- When trained from pure COCO-80 pretrained weights across 5 active cycles (Cycle 4, $n=900$ frames across $N=5$ seeds):
+  - **AE-Primate (Diversity)** achieves top validation AUBC (0.4226) and $0.4300 \pm 0.0045$ test mAP, outperforming passive random ($0.4251 \pm 0.0058$) on 3/5 seeds (paired $t$-test $p = 0.247$).
+  - **AE-Primate (Cost-Aware)** achieves a statistically significant reduction of **59.8 bounding boxes ($-5.48\%$, paired $t$-test $p=0.0105$)**, saving 12.0--17.9 minutes of manual labor across 900 frames, and suppressing cross-seed standard deviation by **60.3%** (from $\sigma=26.5$ down to $\sigma=10.5$, 84.2% variance reduction), with a $-1.32$ mAP test accuracy trade-off ($0.4119$ vs. $0.4251$, $p=0.156$).

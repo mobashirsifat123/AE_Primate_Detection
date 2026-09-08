@@ -4,33 +4,44 @@
   "dataset": {
     "name": "Nkhotakota Primate Dataset",
     "location": "Nkhotakota Wildlife Reserve, Malawi",
-    "total_frames": 40743,
+    "total_frames_indexed": 40743,
+    "total_frames_on_disk": 39386,
     "total_camera_stations": 49,
-    "target_classes": ["yellow_baboon", "vervet_monkey"],
+    "target_classes": ["primate"],
+    "species_aggregated": ["yellow_baboon", "vervet_monkey", "blue_monkey", "lesser_bushbaby"],
+    "license": "CDLA-Permissive-1.0 (LILA BC)",
     "split_strategy": "location_disjoint",
     "splits": {
       "train": {
         "num_stations": 35,
-        "num_frames": 31977
+        "num_frames": 30620
       },
       "val": {
         "num_stations": 7,
         "num_frames": 5560,
-        "stations": ["J21", "O14", "K15", "N16", "L17", "H22", "G25"]
+        "stations": ["E13", "I14", "K15", "L21", "N16", "P20", "P26"]
       },
       "sealed_test": {
         "num_stations": 7,
         "num_frames": 3206,
-        "stations": ["M13", "P15", "H9", "O12", "F24", "Q11", "K18"]
+        "stations": ["G25", "J21", "M22", "O03", "O12", "O14", "R27"]
       }
     }
   },
   "detector": {
     "architecture": "YOLO11n-F16",
     "base_model": "yolo11n.pt",
-    "total_parameters": 2450112,
-    "gflops": 6.3,
+    "total_parameters": 2483792,
+    "gflops": 6.4,
     "input_resolution": [640, 640],
+    "hardware_profile": {
+      "device": "NVIDIA A40 GPU",
+      "framework": "FP16 TensorRT / Torch",
+      "batch_size": 1,
+      "mean_latency_ms": 10.99,
+      "fps": 91.0,
+      "peak_memory_mb": 480
+    },
     "spline_bottleneck": {
       "type": "C3k2_FixedFastKAN",
       "feature_scale": "P5",
