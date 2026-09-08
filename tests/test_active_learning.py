@@ -290,6 +290,167 @@ class TestActiveLearningPilot(unittest.TestCase):
         self.assertEqual(resumed_pool.labeled_indices, pool.labeled_indices)
         self.assertEqual(len(resumed_pool.history), 2)
 
+    def test_foreground_diversity_prioritizes_animals(self):
+        """
+        Test 7: Foreground Diversity Priority
+        - Ensures candidate frames with genuine detected animals are prioritized over
+          empty background frames, preventing camera-trap background drift.
+        """
+        scores = {}
+        # Candidate 1-5: empty background frames with None/zero features
+        for i in range(1, 6):
+            scores[i] = {
+                "uncertainty": 0.5,
+                "has_foreground": False,
+                "presence_prob": 0.01,
+                "fg_feature": None,
+                "num_pred_boxes": 0,
+                "crowding": 0.0
+            }
+        # Candidate 6-10: animal frames with distinct RoI feature representations
+        for i in range(6, 11):
+            feat = np.zeros(256, dtype=np.float32)
+            feat[i * 10] = 1.0  # orthogonal RoI features
+            scores[i] = {
+                "uncertainty": 0.5,
+                "has_foreground": True,
+                "presence_prob": 0.90,
+                "fg_feature": feat,
+                "num_pred_boxes": 2,
+                "crowding": 0.0
+            }
+
+        sampler = ForegroundDiversitySampler(seed=42)
+        selected = sampler.select_batch(
+            candidate_pool=list(range(1, 11)),
+            batch_size=4,
+            scores_data=scores,
+            metadata_mgr=None,
+            labeled_indices=[]
+        )
+
+        # All 4 selected should be from the foreground animal group (6-10)
+        self.assertEqual(len(selected), 4)
+        for s in selected:
+            self.assertIn(s, [6, 7, 8, 9, 10], f"Expected animal candidate (6-10), got {s}")
+
+    def test_proposed_sampler_uncrowded_multi_animal(self):
+        """
+        Test 8: Uncrowded Multi-Animal Supervision
+        - Ensures multiple separated animals provide high supervision density
+          WITHOUT being penalized by the annotation cost proxy.
+        """
+        meta = MetadataManager(index_json_path=str(self.index_json_p))
+
+        # Single animal, uncrowded
+        cost_single = meta.compute_cost_proxy(
+            num_boxes=1,
+            crowding=0.0,
+            cost_base=1.0,
+            cost_box_weight=0.0,
+            cost_crowd_weight=0.5,
+            crowding_overlap=0.0,
+            overlap_only=True
+        )
+
+        # Troop of 4 animals, all separated (zero IoU overlap)
+        cost_troop = meta.compute_cost_proxy(
+            num_boxes=4,
+            crowding=0.0,
+            cost_base=1.0,
+            cost_box_weight=0.0,
+            cost_crowd_weight=0.5,
+            crowding_overlap=0.0,
+            overlap_only=True
+        )
+
+        # In overlap_only mode with cost_box_weight=0.0, cost_troop should equal cost_single
+        self.assertEqual(cost_troop, cost_single)
+        self.assertEqual(cost_troop, 1.0)
+
+    def test_proposed_sampler_penalizes_crowded_occlusions(self):
+        """
+        Test 9: Overlap Crowding Regularization
+        - Ensures frames with severe bounding-box overlap are penalized.
+        """
+        meta = MetadataManager(index_json_path=str(self.index_json_p))
+
+        cost_uncrowded = meta.compute_cost_proxy(
+            num_boxes=3,
+            crowding=0.0,
+            cost_base=1.0,
+            cost_box_weight=0.0,
+            cost_crowd_weight=0.5,
+            crowding_overlap=0.0,
+            overlap_only=True
+        )
+
+        cost_heavily_occluded = meta.compute_cost_proxy(
+            num_boxes=3,
+            crowding=1.5,
+            cost_base=1.0,
+            cost_box_weight=0.0,
+            cost_crowd_weight=0.5,
+            crowding_overlap=1.2,
+            overlap_only=True
+        )
+
+        self.assertGreater(cost_heavily_occluded, cost_uncrowded)
+        # Expected: 1.0 + 0.5 * 1.2 = 1.6
+        self.assertAlmostEqual(cost_heavily_occluded, 1.6)
+
+    def test_proposed_sampler_presence_gating(self):
+        """
+        Test 10: Primate Presence Gating
+        - Confirms that frames with high presence probability are prioritized over empty frames,
+          even if the empty frame has residual background uncertainty.
+        """
+        meta = MetadataManager(index_json_path=str(self.index_json_p))
+
+        scores = {
+            1: {
+                # High uncertainty on empty background (e.g. blowing grass)
+                "uncertainty": 0.95,
+                "presence_prob": 0.05,
+                "has_foreground": False,
+                "fg_feature": None,
+                "num_pred_boxes": 0,
+                "crowding": 0.0,
+                "crowding_overlap": 0.0
+            },
+            2: {
+                # Confident primate detection
+                "uncertainty": 0.75,
+                "presence_prob": 0.92,
+                "has_foreground": True,
+                "fg_feature": np.ones(256, dtype=np.float32) * 0.1,
+                "num_pred_boxes": 2,
+                "crowding": 0.0,
+                "crowding_overlap": 0.0
+            }
+        }
+
+        sampler = SiteEventCostAwareSampler(
+            seed=42,
+            lambda_d=0.0,
+            lambda_s=0.0,
+            lambda_r=0.0,
+            presence_gating=True,
+            presence_floor=0.10,
+            cost_box_weight=0.0
+        )
+
+        selected = sampler.select_batch(
+            candidate_pool=[1, 2],
+            batch_size=1,
+            scores_data=scores,
+            metadata_mgr=meta,
+            labeled_indices=[]
+        )
+
+        # Candidate 2 (primate detection) should be selected first despite candidate 1's slightly higher raw uncertainty
+        self.assertEqual(selected[0], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

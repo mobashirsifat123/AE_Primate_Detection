@@ -100,11 +100,21 @@ class MetadataManager:
         crowding: float = 0.0,
         cost_base: float = 1.0,
         cost_box_weight: float = 0.5,
-        cost_crowd_weight: float = 0.25
+        cost_crowd_weight: float = 0.25,
+        crowding_overlap: float = 0.0,
+        overlap_only: bool = False
     ) -> float:
         """
         Computes annotation cost proxy:
-        cost = base + box_weight * num_boxes + crowd_weight * crowding
+        If overlap_only is True:
+            cost = base + crowd_weight * crowding_overlap
+            (Does not penalize distinct multiple animals; only penalizes occluding overlaps)
+        Else:
+            cost = base + box_weight * num_boxes + crowd_weight * crowding
         Strictly a proxy based on object count and crowding; not human clock timing.
         """
+        if overlap_only:
+            eff_crowd = crowding_overlap if crowding_overlap > 0.0 else crowding
+            return float(cost_base + cost_crowd_weight * eff_crowd)
         return float(cost_base + cost_box_weight * num_boxes + cost_crowd_weight * crowding)
+

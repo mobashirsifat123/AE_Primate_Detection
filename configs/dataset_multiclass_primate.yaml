@@ -1,0 +1,48 @@
+# 4-Primate Species Fine-Grained Active Learning Benchmark
+# Nkhotakota Wildlife Reserve Multi-Class Dataset
+# Unbundles the collapsed binary primate class into 4 distinct species
+
+path: /mnt/nas/users/moba/projects/AE_Primate_Detection/datasets/nkhotakota_multiclass
+train: /home/moba/data/primate_yolo/nkhotakota_multiclass_train.txt
+val: /home/moba/data/primate_yolo/nkhotakota_multiclass_val.txt
+test: /home/moba/data/primate_yolo/nkhotakota_multiclass_test.txt
+
+# Class definitions
+nc: 4
+names:
+  0: yellow_baboon      # Papio cynocephalus
+  1: vervet_monkey      # Chlorocebus pygerythrus
+  2: blue_monkey        # Cercopithecus mitis
+  3: lesser_bushbaby    # Galago moholi
+
+# Metadata index and split definitions
+index_json: /mnt/nas/users/moba/projects/AE_Primate_Detection/datasets/nkhotakota_multiclass/index.json
+images_dir: /home/moba/data/primate_yolo/images
+labels_dir: /home/moba/data/primate_yolo/labels_multiclass
+
+# Camera Station Partition (strictly location-disjoint)
+splits:
+  train_locations:
+    - S01
+    - S02
+    - S03
+    - S04
+    - S05
+    - S06
+    - S07
+    - S08
+    - S09
+    - S10
+    - S11
+    - S12
+    - S13
+    - S14
+  val_locations:
+    - S15
+    - S16
+    - S17
+  test_locations:
+    - S18
+    - S19
+    - S20
+    - S21

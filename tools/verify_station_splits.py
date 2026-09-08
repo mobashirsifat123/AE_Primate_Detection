@@ -12,9 +12,10 @@ def main():
     index_path = Path("/mnt/nas/users/moba/projects/AE_Primate_Detection/datasets/nkhotakota/index.json")
     if not index_path.exists():
         index_path = Path("datasets/nkhotakota/index.json")
-    
-    with open(index_path) as f:
-        data = json.load(f)
+    if not index_path.exists():
+        print(f"Dataset index not found locally at {index_path}.")
+        print("Run this script directly on the remote GPU server (A40/pro6000) where the NAS dataset is mounted.")
+        return
 
     val_locs = sorted(data["splits"]["val_locs"])
     test_locs = sorted(data["splits"]["test_locs"])

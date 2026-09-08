@@ -29,9 +29,12 @@ class SiteEventCostAwareSampler(BaseAcquisitionMethod):
         lambda_r: float = 0.8,
         cost_epsilon: float = 0.001,
         cost_base: float = 1.0,
-        cost_box_weight: float = 0.5,
-        cost_crowd_weight: float = 0.25,
-        max_event_quota: int = 3
+        cost_box_weight: float = 0.0,
+        cost_crowd_weight: float = 0.5,
+        max_event_quota: int = 3,
+        presence_gating: bool = True,
+        presence_floor: float = 0.10,
+        overlap_only_crowd: bool = True
     ):
         super().__init__(name="proposed", seed=seed)
         self.lambda_d = lambda_d
@@ -42,6 +45,9 @@ class SiteEventCostAwareSampler(BaseAcquisitionMethod):
         self.cost_box_weight = cost_box_weight
         self.cost_crowd_weight = cost_crowd_weight
         self.max_event_quota = max_event_quota
+        self.presence_gating = presence_gating
+        self.presence_floor = presence_floor
+        self.overlap_only_crowd = overlap_only_crowd
 
     def select_batch(
         self,
@@ -56,16 +62,13 @@ class SiteEventCostAwareSampler(BaseAcquisitionMethod):
         cand_indices = list(candidate_pool)
         N = len(cand_indices)
 
-        # 1. Uncertainty Term
+        # 1. Uncertainty Term (normalized to [0, 1] by scale to preserve absolute uncertainty)
         raw_uncertainties = np.array([
             float(scores_data.get(idx, {}).get("uncertainty", 0.0))
             for idx in cand_indices
         ], dtype=np.float32)
-        unc_min, unc_max = float(raw_uncertainties.min()), float(raw_uncertainties.max())
-        if unc_max - unc_min > 1e-8:
-            norm_uncertainties = (raw_uncertainties - unc_min) / (unc_max - unc_min)
-        else:
-            norm_uncertainties = np.zeros(N, dtype=np.float32)
+        unc_max = float(raw_uncertainties.max()) if N > 0 else 1.0
+        norm_uncertainties = np.clip(raw_uncertainties / max(1.0, unc_max), 0.0, 1.0)
 
         # 2. Foreground Diversity Initialization
         cand_features = []
@@ -95,19 +98,26 @@ class SiteEventCostAwareSampler(BaseAcquisitionMethod):
             sims = np.dot(X_cand, mean_feat.T).squeeze(1)
             min_dists = np.sqrt(np.clip(2.0 - 2.0 * sims, 0.0, 4.0))
 
-        # 3. Estimated Cost Proxy
+        # 3. Estimated Cost Proxy & Presence Gating
         costs = np.zeros(N, dtype=np.float32)
+        presence_factors = np.ones(N, dtype=np.float32)
         for i, idx in enumerate(cand_indices):
             entry = scores_data.get(idx, {})
             n_boxes = entry.get("num_pred_boxes", 0)
             crowd = entry.get("crowding", 0.0)
+            crowd_overlap = entry.get("crowding_overlap", crowd)
             costs[i] = metadata_mgr.compute_cost_proxy(
                 num_boxes=n_boxes,
                 crowding=crowd,
                 cost_base=self.cost_base,
                 cost_box_weight=self.cost_box_weight,
-                cost_crowd_weight=self.cost_crowd_weight
+                cost_crowd_weight=self.cost_crowd_weight,
+                crowding_overlap=crowd_overlap,
+                overlap_only=self.overlap_only_crowd
             )
+            if self.presence_gating:
+                p_presence = float(entry.get("presence_prob", entry.get("max_confidence", 0.0)))
+                presence_factors[i] = max(self.presence_floor, min(1.0, p_presence))
 
         # Precompute candidate sites and events
         cand_sites = [metadata_mgr.get_site(idx) for idx in cand_indices]
@@ -125,13 +135,10 @@ class SiteEventCostAwareSampler(BaseAcquisitionMethod):
 
         # Sequential greedy selection loop
         for step in range(batch_size):
-            # Normalize current diversity distances to [0, 1]
+            # Normalize current diversity distances to [0, 1] by scale
             avail_dists = min_dists[available]
-            d_min, d_max = float(avail_dists.min()), float(avail_dists.max())
-            if d_max - d_min > 1e-8:
-                norm_diversity = (min_dists - d_min) / (d_max - d_min)
-            else:
-                norm_diversity = np.zeros(N, dtype=np.float32)
+            d_max = float(avail_dists.max()) if len(avail_dists) > 0 else 1.0
+            norm_diversity = np.clip(min_dists / max(1e-6, d_max), 0.0, 1.0)
 
             best_score = -float("inf")
             best_cand_pos = -1
@@ -158,12 +165,10 @@ class SiteEventCostAwareSampler(BaseAcquisitionMethod):
                 u_i = norm_uncertainties[pos]
                 d_i = norm_diversity[pos]
                 c_i = costs[pos]
+                p_i = presence_factors[pos]
 
-                numerator = u_i + self.lambda_d * d_i + self.lambda_s * site_weight
-                denominator = c_i + self.cost_epsilon
-                penalty = self.lambda_r * event_redundancy
-
-                score = (numerator / denominator) - penalty
+                core_ratio = (u_i + self.lambda_d * d_i + self.lambda_s * site_weight) / (c_i + self.cost_epsilon)
+                score = (p_i * core_ratio) - (self.lambda_r * event_redundancy)
 
                 if score > best_score:
                     best_score = score

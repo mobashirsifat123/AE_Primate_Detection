@@ -1,0 +1,26 @@
+{
+  "hardware_metadata": {
+    "hostname": "Mobashirs-MacBook-Air.local",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "processor": "arm",
+    "python_version": "3.14.5",
+    "jetson_model": "Non-Jetson Host"
+  },
+  "configuration": {
+    "checkpoint": "experiments/checkpoints/yolo11n_f16_frozen_seed0.pt",
+    "imgsz": 640,
+    "batch_size": 1,
+    "half_precision": true,
+    "num_frames": 10
+  },
+  "performance_metrics": {
+    "latency_ms_mean": 22.4,
+    "latency_ms_p50": 21.8,
+    "latency_ms_p95": 26.5,
+    "latency_ms_p99": 31.2,
+    "throughput_fps": 44.6,
+    "peak_memory_mb": 428.0,
+    "mean_power_watts": 9.85,
+    "total_benchmark_time_sec": 0.22
+  }
+}

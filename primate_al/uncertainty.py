@@ -97,17 +97,24 @@ class UncertaintyScorer:
         # 3. Combined Uncertainty
         uncertainty = mean_entropy + self.alpha_disagree * disagreement
 
-        # 4. Crowding Computation (sum of pairwise IoUs among predicted boxes)
+        # 4. Crowding Computation (sum of pairwise IoUs and squared overlap among predicted boxes)
         crowding = 0.0
+        crowding_overlap = 0.0
         if n_weak > 1:
             xyxy = boxes_weak.xyxy
             ious = torchvision.ops.box_iou(xyxy, xyxy)
             # Sum upper triangular elements (excluding diagonal)
             triu_indices = torch.triu_indices(n_weak, n_weak, offset=1)
-            crowding = float(ious[triu_indices[0], triu_indices[1]].sum().item())
+            pairwise_ious = ious[triu_indices[0], triu_indices[1]]
+            crowding = float(pairwise_ious.sum().item())
+            crowding_overlap = float((pairwise_ious ** 2).sum().item())
 
-        # 5. Extract foreground features if requested
+        # 5. Foreground detection and feature extraction
+        has_foreground = (n_weak > 0 and max_conf_weak >= self.conf_threshold)
+        presence_prob = float(max_conf_weak)
+
         fg_feature = None
+        box_features = None
         if feature_extractor is not None:
             orig_img = results_weak.orig_img  # H, W, 3 (BGR)
             # Convert to RGB and torch tensor
@@ -115,13 +122,28 @@ class UncertaintyScorer:
             tensor = torch.from_numpy(rgb).permute(2, 0, 1).unsqueeze(0).float() / 255.0
             tensor = tensor.to(self.device)
             boxes_tensor = boxes_weak.xyxy.to(self.device) if n_weak > 0 else None
-            fg_feature = feature_extractor.extract_image_features(tensor, boxes_tensor)
+            confs_tensor = boxes_weak.conf.to(self.device) if n_weak > 0 else None
+            fg_feat_res, has_fg_res, box_feats = feature_extractor.extract_image_features(
+                tensor,
+                pred_boxes_xyxy=boxes_tensor,
+                box_confidences=confs_tensor,
+                conf_thresh=self.conf_threshold
+            )
+            fg_feature = fg_feat_res
+            box_features = box_feats
+            if fg_feat_res is not None:
+                has_foreground = has_fg_res
 
         return {
             "num_pred_boxes": n_weak,
             "crowding": crowding,
+            "crowding_overlap": crowding_overlap,
             "entropy": mean_entropy,
             "disagreement": disagreement,
             "uncertainty": uncertainty,
-            "fg_feature": fg_feature
+            "max_confidence": max_conf_weak,
+            "presence_prob": presence_prob,
+            "has_foreground": has_foreground,
+            "fg_feature": fg_feature,
+            "box_features": box_features
         }

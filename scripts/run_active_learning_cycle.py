@@ -221,14 +221,17 @@ def run_cycle(args):
             elif strategy == "proposed":
                 sampler = SiteEventCostAwareSampler(
                     seed=seed + c,
-                    lambda_d=pw["lambda_d"],
-                    lambda_s=pw["lambda_s"],
-                    lambda_r=pw["lambda_r"],
-                    cost_epsilon=pw["cost_epsilon"],
-                    cost_base=pw["cost_base"],
-                    cost_box_weight=pw["cost_box_weight"],
-                    cost_crowd_weight=pw["cost_crowd_weight"],
-                    max_event_quota=pw["max_event_quota"]
+                    lambda_d=pw.get("lambda_d", 0.5),
+                    lambda_s=pw.get("lambda_s", 0.3),
+                    lambda_r=pw.get("lambda_r", 0.8),
+                    cost_epsilon=pw.get("cost_epsilon", 0.001),
+                    cost_base=pw.get("cost_base", 1.0),
+                    cost_box_weight=pw.get("cost_box_weight", 0.0),
+                    cost_crowd_weight=pw.get("cost_crowd_weight", 0.5),
+                    max_event_quota=pw.get("max_event_quota", 3),
+                    presence_gating=pw.get("presence_gating", True),
+                    presence_floor=pw.get("presence_floor", 0.10),
+                    overlap_only_crowd=pw.get("overlap_only_crowd", True)
                 )
             else:
                 raise ValueError(f"Unknown strategy: {strategy}")
