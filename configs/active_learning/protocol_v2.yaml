@@ -33,9 +33,12 @@ active_learning:
     alpha_disagree: 0.4      # Weak/strong prediction disagreement weight
     event_delta_seconds: 60  # Burst grouping interval (seconds)
     cost_base: 1.0           # Base inspection cost proxy per image
-    cost_box_weight: 0.5     # Cost proxy per bounding box
-    cost_crowd_weight: 0.25  # Cost proxy for box crowding / overlap
+    cost_box_weight: 0.0     # Cost proxy per bounding box (0.0: uncrowded multi-animal frames are NOT penalized)
+    cost_crowd_weight: 0.5   # Cost proxy for box crowding / occluding overlap
     max_event_quota: 3       # Max frames allowed per event in a single batch
+    presence_gating: true    # Gate score by presence probability P(animal in frame)
+    presence_floor: 0.10     # Presence probability floor multiplier
+    overlap_only_crowd: true # Penalize only overlapping bounding box IoUs
 
 training:
   epochs: 40
